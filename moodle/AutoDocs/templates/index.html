@@ -54,63 +54,56 @@
             <h1>Caplogy</h1>
         </div>
         <!-- ...le reste du contenu inchangé... -->
-    <div class="loader-overlay" id="loader-overlay">
-        <div class="spinner"></div>
-    </div>
-    <div class="main-flex-wrapper">
-        <div class="caplogy-container">
-            <div class="caplogy-header">
-                <img src="{% static 'autodocs/logo.png' %}" alt="Logo Caplogy" />
-                <h1>Caplogy</h1>
-            </div>
+        <form method="post" id="doc-form">
+            {% csrf_token %}
+            <label for="type_doc">Type de document :</label>
+            <select id="type_doc" name="type_doc" required>
+                <option value="attestation_de_remise_de_materiel" {% if type_doc == "attestation_de_remise_de_materiel" %}selected{% endif %}>
+                    Attestation de remise de matériel
+                </option>
+                <option value="attestation_employeur" {% if type_doc == "attestation_employeur" %}selected{% endif %}>
+                    Attestation employeur
+                </option>
+                <option value="contrat_cdi" {% if type_doc == "contrat_cdi" %}selected{% endif %}>
+                    Contrat CDI
+                </option>
+            </select>
 
-            <form method="post" id="doc-form">
-                {% csrf_token %}
-                <label for="type_doc">Type de document :</label>
-                <select id="type_doc" name="type_doc" required>
-                    <option value="attestation_de_remise_de_materiel" {% if type_doc == "attestation_de_remise_de_materiel" %}selected{% endif %}>
-                        Attestation de remise de matériel
-                    </option>
-                    <option value="attestation_employeur" {% if type_doc == "attestation_employeur" %}selected{% endif %}>
-                        Attestation employeur
-                    </option>
-                    <option value="contrat_cdi" {% if type_doc == "contrat_cdi" %}selected{% endif %}>
-                        Contrat CDI
-                    </option>
-                </select>
+            <label for="prenom">Prénom :</label>
+            <select id="prenom" name="prenom" required>
+                <option value="">-- Choisir un prénom --</option>
+                {% for prenom in prenoms %}
+                    <option value="{{ prenom }}" {% if prenom == select_prenom %}selected{% endif %}>{{ prenom }}</option>
+                {% endfor %}
+            </select>
 
-                <label for="prenom">Prénom :</label>
-                <select id="prenom" name="prenom" required>
-                    <option value="">-- Choisir un prénom --</option>
-                    {% for prenom in prenoms %}
-                        <option value="{{ prenom }}" {% if prenom == select_prenom %}selected{% endif %}>{{ prenom }}</option>
-                    {% endfor %}
-                </select>
+            <label for="nom">Nom :</label>
+            <select id="nom" name="nom" required>
+                <option value="">-- Choisir un nom --</option>
+                {% for nom in noms %}
+                    <option value="{{ nom }}" {% if nom == select_nom %}selected{% endif %}>{{ nom }}</option>
+                {% endfor %}
+            </select>
 
-                <label for="nom">Nom :</label>
-                <select id="nom" name="nom" required>
-                    <option value="">-- Choisir un nom --</option>
-                    {% for nom in noms %}
-                        <option value="{{ nom }}" {% if nom == select_nom %}selected{% endif %}>{{ nom }}</option>
-                    {% endfor %}
-                </select>
+            <button type="button" id="creer-employe-btn">
+                Créer un(e) nouvel(le) employé(e)
+            </button>
+<script>
+    document.getElementById('creer-employe-btn').onclick = function() {
+        window.location.href = "{% url 'creer_employer' %}";
+    };
+</script>
 
-                <button type="button" onclick="window.location.href='{% url 'creer_employer' %}'">
-                    Créer un(e) nouvel(le) employé(e)
-                </button>
+            <input type="hidden" name="generate" value="0" />
+            <button type="submit" name="action" value="preview" id="preview-btn">Preview</button>
+        </form>
 
-                <input type="hidden" name="generate" value="0" />
-                <button type="submit" name="action" value="preview" id="preview-btn">Preview</button>
-            </form>
-
-            <!-- Bouton Modifier-->
-            <form method="get" action="{% url 'modifier_employer' %}">
-                <input type="hidden" name="prenom" value="{{ select_prenom }}">
-                <input type="hidden" name="nom" value="{{ select_nom }}">
-                <button type="submit">Modifier</button>
-            </form>
-
-        </div>
+        <!-- Bouton Modifier-->
+        <form method="get" action="{% url 'modifier_employer' %}">
+            <input type="hidden" name="prenom" value="{{ select_prenom }}">
+            <input type="hidden" name="nom" value="{{ select_nom }}">
+            <button type="submit">Modifier</button>
+        </form>
 
         {% if error_message %}
             <p style="color: red; font-weight: bold;">{{ error_message }}</p>
@@ -181,7 +174,47 @@
             </div>
         </div>
     </div>
-{% endblock %}
+</div>
+<script>
+    // Affiche le loader
+    function showLoader() {
+        document.getElementById('loader-overlay').style.display = 'flex';
+    }
+    // Masque le loader
+    function hideLoader() {
+        document.getElementById('loader-overlay').style.display = 'none';
+    }
+
+    // Loader lors du changement de prénom (submit automatique)
+    document.getElementById('prenom').addEventListener('change', function() {
+        showLoader();
+        document.getElementById('doc-form').submit();
+    });
+
+    // Loader lors du clic sur Preview
+    document.getElementById('preview-btn').addEventListener('click', function() {
+        showLoader();
+    });
+
+    // Loader lors du clic sur Accepter (génération PDF)
+    document.addEventListener('DOMContentLoaded', function() {
+        var generateBtn = document.getElementById('generate-btn');
+        if (generateBtn) {
+            generateBtn.addEventListener('click', function() {
+                showLoader();
+                // Ajout : masquer le loader après un délai raisonnable (ex: 3s) si la page ne se recharge pas
+                setTimeout(function() {
+                    hideLoader();
+                }, 7000);
+            });
+        }
+    });
+
+    // Masquer le loader après chargement de la page
+    window.addEventListener('load', function() {
+        hideLoader();
+    });
+</script>
 <script>
     // Affiche le loader
     function showLoader() {
