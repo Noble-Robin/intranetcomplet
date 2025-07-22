@@ -35,9 +35,9 @@ MANIFEST
 _internal/
 
 # Database files
-*.db
-*.sqlite3
-/Data/
+# *.db
+# *.sqlite3
+# /Data/
 
 # Django
 /media/
