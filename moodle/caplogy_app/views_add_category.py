@@ -5,6 +5,8 @@ from .models import SchoolImage
 from .services.moodle_api import MoodleAPI
 import os
 
+
+from django.contrib.auth.decorators import login_required
 from AutoDocs.utils_group_required import group_required
 
 @login_required
