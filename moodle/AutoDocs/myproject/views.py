@@ -133,7 +133,10 @@ def airtable_entreprise(nom_entreprise):
     return None
 
 
+from ..utils_group_required import group_required
+
 @login_required
+@group_required('admin', 'rh')
 def index(request):
     context = None
     type_doc = None
@@ -488,7 +491,10 @@ def index(request):
         "type_doc": type_doc if 'type_doc' in locals() else None,
     })
 
+from ..utils_group_required import group_required
+
 @login_required
+@group_required('admin', 'rh')
 def creer_employer(request):
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
@@ -529,6 +535,7 @@ def creer_employer(request):
 
 
 @login_required
+@group_required('admin', 'rh')
 def generer_contrat_cdi(request):
 
     conn = sqlite3.connect(db_path)
@@ -826,6 +833,7 @@ def generer_contrat_cdi(request):
     return redirect('/')
 
 @login_required
+@group_required('admin', 'rh')
 def modifier_employer(request):
     # Récupérer les paramètres (par exemple via GET: prenom, nom)
     prenom = request.GET.get("prenom", "")
