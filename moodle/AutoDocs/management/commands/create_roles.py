@@ -11,4 +11,8 @@ class Command(BaseCommand):
             if created:
                 self.stdout.write(self.style.SUCCESS(f"Groupe '{role}' créé."))
             else:
+<<<<<<< HEAD
                 self.stdout.write(f"Groupe '{role}' déjà existant.")
+=======
+                self.stdout.write(f"Groupe '{role}' déjà existant.")
+>>>>>>> 3ad199c281336707a407058fbea28b11bfd12acb

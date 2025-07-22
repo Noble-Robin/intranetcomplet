@@ -5,6 +5,12 @@ from .models import SchoolImage
 from .services.moodle_api import MoodleAPI
 import os
 
+
+from django.contrib.auth.decorators import login_required
+from AutoDocs.utils_group_required import group_required
+
+@login_required
+@group_required('admin')
 def add_category_page(request):
     if request.method == 'POST':
         form = AddCategoryForm(request.POST, request.FILES)

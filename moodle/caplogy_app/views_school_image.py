@@ -6,7 +6,11 @@ from django.views.decorators.http import require_http_methods
 from .services.moodle_api import MoodleAPI
 import os
 from django import forms
+from django.contrib.auth.decorators import login_required
+from AutoDocs.utils_group_required import group_required
 
+@login_required
+@group_required('admin', 'moodle')
 @require_http_methods(["GET", "POST"])
 def school_image_upload(request, category_id=None):
     category_name = None
