@@ -1,0 +1,133 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Créer un employé</title>
+    <link rel="stylesheet" href="{% static 'autodocs/creer_employer.css' %}">
+</head>
+<body>
+    <div class="caplogy-wrapper">
+        <div class="caplogy-container">
+            <h1>Ajout d’un nouvel employé</h1>
+
+            <form method="post" id="multiStepForm" action="{% url 'creer_employer' %}">
+                {% csrf_token %}
+
+                <!-- Étape 0 : Choix du document -->
+                <div class="form-step active">
+                    <label>Type de document :</label>
+                    <select name="type_document" required>
+                        <option value="">-- Sélectionner --</option>
+                        <option value="attestation_de_remise_de_materiel">Attestation de remise de matétiel</option>
+                        <option value="contrat_cdi">Contrat CDI</option>
+                    </select>
+
+                    <button type="button" class="next">Suivant</button>
+                </div>
+
+                <!-- Étape 1 -->
+                <div class="form-step">
+                    <label>Prénom :</label>
+                    <input type="text" name="prenom" value="{{ form_data.prenom }}" required>
+
+                    <label>Nom :</label>
+                    <input type="text" name="nom" value="{{ form_data.nom }}" required>
+
+                    <label>Civilité :</label>
+                    <select name="civilite" required>
+                        <option value="">-- Sélectionner --</option>
+                        <option value="Monsieur" {% if form_data.civilite == "Monsieur" %}selected{% endif %}>Monsieur</option>
+                        <option value="Madame" {% if form_data.civilite == "Madame" %}selected{% endif %}>Madame</option>
+                    </select>
+
+                    <label>Date de naissance :</label>
+                    <input type="date" name="date_de_naissance" value="{{ form_data.date_de_naissance }}">
+
+                    <label>Lieu de naissance :</label>
+                    <input type="text" name="lieu_de_naissance" value="{{ form_data.lieu_de_naissance }}">
+
+                    <label>Nationalité :</label>
+                    <input type="text" name="nationalite" value="{{ form_data.nationalite }}">
+
+                    <button type="button" class="next">Suivant</button>
+                </div>
+
+                <!-- Étape 2 -->
+                <div class="form-step">
+                    <label>Adresse :</label>
+                    <input type="text" name="adresse_maison" value="{{ form_data.adresse_maison }}">
+
+                    <label>Numéro de sécurité sociale :</label>
+                    <input type="text" name="num_secu" value="{{ form_data.num_secu }}">
+
+                    <label>Titre de séjour :</label>
+                    <input type="text" name="titre_sejour" value="{{ form_data.titre_sejour }}">
+
+                    <label>Numéro de séjour :</label>
+                    <input type="text" name="num_sejour" value="{{ form_data.num_sejour }}">
+
+                    <label>Date de validité du séjour :</label>
+                    <input type="date" name="date_valable_sejour" value="{{ form_data.date_valable_sejour }}">
+
+                    <button type="button" class="next">Suivant</button>
+                    <button type="button" class="prev">Précédent</button>
+                </div>
+
+                <!-- Étape 3 -->
+                <div class="form-step">
+                    <label>Poste :</label>
+                    <input type="text" name="poste" value="{{ form_data.poste }}">
+
+                    <label>Date de poste :</label>
+                    <input type="date" name="date_poste" value="{{ form_data.date_poste }}">
+
+                    <label>Position :</label>
+                    <input type="text" name="position" value="{{ form_data.position }}">
+
+                    <label>Coefficient :</label>
+                    <input type="text" name="coefficient" value="{{ form_data.coefficient }}">
+
+                    <label>Lieu de travail :</label>
+                    <input type="text" name="lieu_de_travail" value="{{ form_data.lieu_de_travail }}">
+
+                    <label>Limitation géographique régionale :</label>
+                    <input type="text" name="limit_geo_region" value="{{ form_data.limit_geo_region }}">
+
+                    <label>Nom de l'entreprise :</label>
+                    <select name="entreprise_id" required>
+                        <option value="">-- Sélectionner --</option>
+                        {% for id, nom in entreprises %}
+                            <option value="{{ id }}" {% if form_data.entreprise_id == id|stringformat:"s" %}selected{% endif %}>{{ nom }}</option>
+                        {% endfor %}
+                    </select>
+
+                    <button type="submit">Générer le document</button>
+                    <button type="button" class="prev">Précédent</button>
+                    <button type="button" class="prev" onclick="window.location.href='/'">Retour</button>
+
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const steps = document.querySelectorAll('.form-step');
+        const nextBtns = document.querySelectorAll('.next');
+        const prevBtns = document.querySelectorAll('.prev');
+        let currentStep = 0;
+
+        nextBtns.forEach(btn => btn.addEventListener('click', () => {
+            steps[currentStep].classList.remove('active');
+            currentStep++;
+            steps[currentStep].classList.add('active');
+        }));
+
+        prevBtns.forEach(btn => btn.addEventListener('click', () => {
+            steps[currentStep].classList.remove('active');
+            currentStep--;
+            steps[currentStep].classList.add('active');
+        }));
+    </script>
+</body>
+</html>
