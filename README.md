@@ -32,7 +32,7 @@ Projet Django complet pour la gestion d'un intranet d'entreprise, incluant :
    ```
 3. **Installer les dépendances** :
    ```bash
-   pip install -r AutoDocs/requirement.txt
+   pip install -r requirement.txt
    ```
 4. **Appliquer les migrations** :
    ```bash
@@ -40,15 +40,20 @@ Projet Django complet pour la gestion d'un intranet d'entreprise, incluant :
    ```
 5. **Créer un superutilisateur** (optionnel, pour accès admin Django natif) :
    ```bash
-   python manage.py createsuperuser
+   from django.contrib.auth.models import User, Group
+    user = User.objects.get(username="ton_nom_utilisateur")  # remplace par ton username
+    admin_group = Group.objects.get(name="admin")
+    user.groups.add(admin_group)
+    user.save()
+    print("Ajouté au groupe admin !")
    ```
 6. **Lancer le serveur** :
    ```bash
-   python manage.py runserver
+   nohup python moodle/manage.py runserver 0.0.0.0:8000 > server.log 2>&1 &
    ```
 
 ## Utilisation
-- Accéder à l'intranet via `http://localhost:8000/`
+- Accéder à l'intranet via `intranet.caplogy.com`
 - L'interface admin personnalisée est accessible uniquement aux membres du groupe "admin"
 - Générer des documents via le menu principal
 - Ajouter/modifier des employés via les formulaires dédiés
@@ -66,7 +71,8 @@ Projet Django complet pour la gestion d'un intranet d'entreprise, incluant :
 
 ## Auteurs
 - Robin Noble
-- Collaborateurs éventuels
+- Thibault Frescaline
+- Jordan Milleville Lino
 
 ## Licence
 Projet privé, usage interne uniquement.
