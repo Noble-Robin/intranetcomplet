@@ -47,6 +47,7 @@ TEMPLATES = [
             BASE_DIR / 'caplogy_app' / 'templates',
             BASE_DIR / 'homepage' / 'templates',
             BASE_DIR / 'AutoDocs' / 'myproject' / 'templates',
+            BASE_DIR / 'AutoDocs' / 'templates',
         ],
         'APP_DIRS': True,
         'OPTIONS': {
