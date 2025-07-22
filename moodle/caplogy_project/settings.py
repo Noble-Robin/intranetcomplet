@@ -12,6 +12,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY', 'votre-clé-secrète-à-remplacer')
 DEBUG = os.getenv('DEBUG', 'True') == 'True'
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '').split(',') if os.getenv('ALLOWED_HOSTS') else []
+print('ALLOWED_HOSTS:', ALLOWED_HOSTS)
 
 CSRF_TRUSTED_ORIGINS = [
     'https://intranet.caplogy.com',
