@@ -7,7 +7,7 @@ from .services.moodle_api import MoodleAPI
 import os
 from django import forms
 from django.contrib.auth.decorators import login_required
-from ..AutoDocs.utils_group_required import group_required
+from AutoDocs.utils_group_required import group_required
 
 @login_required
 @group_required('admin', 'moodle')
