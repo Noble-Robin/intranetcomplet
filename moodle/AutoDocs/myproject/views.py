@@ -281,12 +281,12 @@ def index(request):
                         user_data[mapped_key] = value
                 # print("[DEBUG] Airtable utilisé pour pré-remplir :", user_data)
 
-                # Correction : extraire l'URL de la photo (clé "Photo" majuscule d'abord)
+                # Correction : extraire l'URL de la photo (clé "Photo" majuscule d'abord, toujours depuis airtable_data)
                 photo_field = None
-                if "Photo" in user_data:
-                    photo_field = user_data["Photo"]
-                elif "photo" in user_data:
-                    photo_field = user_data["photo"]
+                if "Photo" in airtable_data:
+                    photo_field = airtable_data["Photo"]
+                elif "photo" in airtable_data:
+                    photo_field = airtable_data["photo"]
                 if isinstance(photo_field, list) and photo_field and isinstance(photo_field[0], dict):
                     user_data["photo"] = photo_field[0].get("url", "")
                 elif isinstance(photo_field, str):
