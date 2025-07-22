@@ -1,0 +1,322 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Créer un employé</title>
+    <link rel="stylesheet" href="{% static 'autodocs/creer_employer.css' %}">
+    <style>
+        /* Nouveau design du stepper Caplogy */
+        .stepper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 32px;
+            gap: 0;
+            position: relative;
+        }
+        .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            flex: 1 1 0;
+            z-index: 1;
+        }
+        .step-circle {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: #e6f0fa;
+            color: #3498db;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 18px;
+            border: 3px solid #e6f0fa;
+            transition: background 0.2s, color 0.2s, border 0.2s;
+            margin-bottom: 6px;
+            z-index: 2;
+        }
+        .step-label {
+            font-size: 14px;
+            color: #b0b0b0;
+            margin-top: 2px;
+            text-align: center;
+            min-width: 40px;
+            font-weight: 500;
+        }
+        .step.active .step-circle {
+            background: #3498db;
+            color: #fff;
+            border: 3px solid #3498db;
+            box-shadow: 0 0 8px #3498db44;
+        }
+        .step.completed .step-circle {
+            background:rgb(34, 77, 156);
+            color: #fff;
+            border: 3px solidrgb(255, 255, 255);
+        }
+        .step.active .step-label {
+            color: #3498db;
+            font-weight: bold;
+        }
+        .step.completed .step-label {
+            color:rgb(34, 73, 158);
+            font-weight: bold;
+        }
+        .step:not(:last-child)::after {
+            content: "";
+            position: absolute;
+            top: 19px;
+            left: 10%;
+            width: 150%;
+            height: 4px;
+            background: #e6f0fa;
+            z-index: 0;
+            transform: translateX(19px);
+        }
+        .step.completed:not(:last-child)::after {
+            background:rgb(27, 119, 177);
+        }
+        .step.active:not(:last-child)::after {
+            background: linear-gradient(90deg,rgb(23, 87, 151) 60%, #3498db 100%);
+        }
+        .step:first-child {
+            align-items: flex-start;
+        }
+        .step:last-child {
+            align-items: flex-end;
+        }
+        @media (max-width: 600px) {
+            .step-label { min-width: 40px; font-size: 11px; }
+            .step-circle { width: 26px; height: 26px; font-size: 13px; }
+        }
+
+        /* Loader styles */
+        .loader-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(255,255,255,0.7);
+            z-index: 9999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+        .spinner {
+            border: 8px solid #f3f3f3;
+            border-top: 8px solid #3498db;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg);}
+            100% { transform: rotate(360deg);}
+        }
+    </style>
+</head>
+<body>
+    <div class="loader-overlay" id="loader-overlay">
+        <div class="spinner"></div>
+    </div>
+    <div class="caplogy-wrapper">
+        <div class="caplogy-container">
+            <!-- Stepper Caplogy -->
+            <div class="stepper" id="stepper">
+                <div class="step active">
+                    <div class="step-circle">1</div>
+                    <div class="step-label">Document</div>
+                </div>
+                <div class="step">
+                    <div class="step-circle">2</div>
+                    <div class="step-label">Identité</div>
+                </div>
+                <div class="step">
+                    <div class="step-circle">3</div>
+                    <div class="step-label">Infos séjour</div>
+                </div>
+                <div class="step">
+                    <div class="step-circle">4</div>
+                    <div class="step-label">Poste</div>
+                </div>
+            </div>
+
+            <h1>Ajout d’un nouvel employé</h1>
+
+            <form method="post" id="multiStepForm" action="{% url 'creer_employer' %}">
+                {% csrf_token %}
+
+                <!-- Étape 0 : Choix du document -->
+                <div class="form-step active">
+                    <label>Type de document :</label>
+                    <select name="type_document" required>
+                        <option value="">-- Sélectionner --</option>
+                        <!--<option value="attestation_de_remise_de_materiel">Attestation de remise de matétiel</option>-->
+                        <option value="contrat_cdi">Contrat CDI</option>
+                    </select>
+
+                    <button type="button" class="next">Suivant</button>
+                </div>
+
+                <!-- Étape 1 -->
+                <div class="form-step">
+                    <label>Prénom :</label>
+                    <input type="text" name="prenom" value="{{ form_data.prenom }}" required>
+
+                    <label>Nom :</label>
+                    <input type="text" name="nom" value="{{ form_data.nom }}" required>
+
+                    <label>Civilité :</label>
+                    <select name="civilite" required>
+                        <option value="">-- Sélectionner --</option>
+                        <option value="Monsieur" {% if form_data.civilite == "Monsieur" %}selected{% endif %}>Monsieur</option>
+                        <option value="Madame" {% if form_data.civilite == "Madame" %}selected{% endif %}>Madame</option>
+                    </select>
+
+                    <label>Date de naissance :</label>
+                    <input type="date" name="date_de_naissance" value="{{ form_data.date_de_naissance }}">
+
+                    <label>Lieu de naissance :</label>
+                    <input type="text" name="lieu_de_naissance" value="{{ form_data.lieu_de_naissance }}">
+
+                    <label>Nationalité :</label>
+                    <input type="text" name="nationalite" value="{{ form_data.nationalite }}">
+
+                    <button type="button" class="next">Suivant</button>
+                </div>
+
+                <!-- Étape 2 -->
+                <div class="form-step">
+                    <label>Adresse :</label>
+                    <input type="text" name="adresse_maison" value="{{ form_data.adresse_maison }}">
+
+                    <label>Numéro de sécurité sociale (pas encore disponible):</label>
+                    <input type="text" name="num_secu" value="{{ form_data.num_secu }}">
+
+                    <label>Titre de séjour (pas encore disponible):</label>
+                    <input type="text" name="titre_sejour" value="{{ form_data.titre_sejour }}">
+
+                    <label>Numéro de séjour (pas encore disponible):</label>
+                    <input type="text" name="num_sejour" value="{{ form_data.num_sejour }}">
+
+                    <label>Date de validité du séjour (pas encore disponible):</label>
+                    <input type="date" name="date_valable_sejour" value="{{ form_data.date_valable_sejour }}">
+
+                    <button type="button" class="next">Suivant</button>
+                    <button type="button" class="prev">Précédent</button>
+                </div>
+
+                <!-- Étape 3 -->
+                <div class="form-step">
+                    <label>Poste :</label>
+                    <input type="text" name="poste" value="{{ form_data.poste }}">
+
+                    <label>Date de poste :</label>
+                    <input type="date" name="date_poste" value="{{ form_data.date_poste }}">
+
+                    <label>Position (pas encore disponible):</label>
+                    <input type="text" name="position" value="{{ form_data.position }}">
+
+                    <label>Coefficient (pas encore disponible):</label>
+                    <input type="text" name="coefficient" value="{{ form_data.coefficient }}">
+
+                    <label>Lieu de travail (pas encore disponible):</label>
+                    <input type="text" name="lieu_de_travail" value="{{ form_data.lieu_de_travail }}">
+
+                    <label>Limitation géographique régionale (pas encore disponible):</label>
+                    <input type="text" name="limit_geo_region" value="{{ form_data.limit_geo_region }}">
+
+                    <label>Nom de l'entreprise :</label>
+                    <select name="entreprise_id" required>
+                        <option value="">-- Sélectionner --</option>
+                        {% for id, nom in entreprises %}
+                            <option value="{{ id }}" {% if form_data.entreprise_id == id|stringformat:"s" %}selected{% endif %}>{{ nom }}</option>
+                        {% endfor %}
+                    </select>
+
+                    <button type="submit">Enregister l'employer</button>
+                    <button type="button" class="prev">Précédent</button>
+                    <button type="button" class="prevhome" onclick="window.location.href='/'">Retour</button>
+
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const steps = document.querySelectorAll('.form-step');
+        const nextBtns = document.querySelectorAll('.next');
+        const prevBtns = document.querySelectorAll('.prev');
+        const prevHomeBtns = document.querySelectorAll('.prevhome');
+        let currentStep = 0;
+
+        // Affiche le loader lors du clic sur "Enregister l'employer" seulement si tous les champs requis sont remplis
+        document.addEventListener('DOMContentLoaded', function() {
+            // Loader pour le bouton "Enregister l'employer"
+            var submitBtn = document.querySelector('button[type="submit"]');
+            if (submitBtn) {
+                submitBtn.addEventListener('click', function(e) {
+                    var form = document.getElementById('multiStepForm');
+                    if (form && form.checkValidity()) {
+                        var loader = document.getElementById('loader-overlay');
+                        if (loader) loader.style.display = 'flex';
+                    }
+                    // Sinon, le navigateur affichera les erreurs natives et le loader ne s'affichera pas
+                });
+            }
+            // Loader pour tous les boutons .prevhome (Retour)
+            var prevHomeBtns = document.querySelectorAll('.prevhome');
+            prevHomeBtns.forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    var loader = document.getElementById('loader-overlay');
+                    if (loader) loader.style.display = 'flex';
+                });
+            });
+        });
+
+        // Masquer le loader après chargement de la page
+        window.addEventListener('load', function() {
+            var loader = document.getElementById('loader-overlay');
+            if (loader) loader.style.display = 'none';
+        });
+
+        // Stepper logic
+        const stepperSteps = document.querySelectorAll('#stepper .step');
+        function updateStepper() {
+            stepperSteps.forEach((step, idx) => {
+                step.classList.remove('active', 'completed');
+                if (idx < currentStep) {
+                    step.classList.add('completed');
+                } else if (idx === currentStep) {
+                    step.classList.add('active');
+                }
+            });
+        }
+        updateStepper();
+
+        nextBtns.forEach(btn => btn.addEventListener('click', () => {
+            steps[currentStep].classList.remove('active');
+            currentStep++;
+            steps[currentStep].classList.add('active');
+            updateStepper();
+        }));
+
+        prevBtns.forEach(btn => btn.addEventListener('click', () => {
+            steps[currentStep].classList.remove('active');
+            currentStep--;
+            steps[currentStep].classList.add('active');
+            updateStepper();
+        }));
+
+        prevHomeBtns.forEach(btn => btn.addEventListener('click', () => {
+            steps[currentStep].classList.remove('active');
+            currentStep--;
+            steps[currentStep].classList.add('active');
+            updateStepper();
+        }));
+    </script>
+</body>
+</html>

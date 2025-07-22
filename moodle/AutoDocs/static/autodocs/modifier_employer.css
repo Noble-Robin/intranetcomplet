@@ -1,0 +1,202 @@
+/* Stepper Caplogy styles */
+.stepper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 32px;
+    gap: 0;
+    position: relative;
+}
+.step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    flex: 1 1 0;
+    z-index: 1;
+}
+.step-circle {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: #e6f0fa;
+    color: #3498db;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 18px;
+    border: 3px solid #e6f0fa;
+    transition: background 0.2s, color 0.2s, border 0.2s;
+    margin-bottom: 6px;
+    z-index: 2;
+}
+.step-label {
+    font-size: 14px;
+    color: #b0b0b0;
+    margin-top: 2px;
+    text-align: center;
+    min-width: 40px;
+    font-weight: 500;
+}
+.step.active .step-circle {
+    background: #3498db;
+    color: #fff;
+    border: 3px solid #3498db;
+    box-shadow: 0 0 8px #3498db44;
+}
+.step.completed .step-circle {
+    background: rgb(34, 77, 156);
+    color: #fff;
+    border: 3px solid rgb(255, 255, 255);
+}
+.step.active .step-label {
+    color: #3498db;
+    font-weight: bold;
+}
+.step.completed .step-label {
+    color: rgb(34, 73, 158);
+    font-weight: bold;
+}
+.step:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    top: 19px;
+    left: 10%;
+    width: 150%;
+    height: 4px;
+    background: #e6f0fa;
+    z-index: 0;
+    transform: translateX(19px);
+}
+.step.completed:not(:last-child)::after {
+    background: rgb(27, 119, 177);
+}
+.step.active:not(:last-child)::after {
+    background: linear-gradient(90deg, rgb(23, 87, 151) 60%, #3498db 100%);
+}
+.step:first-child {
+    align-items: flex-start;
+}
+.step:last-child {
+    align-items: flex-end;
+}
+@media (max-width: 600px) {
+    .step-label {
+        min-width: 40px;
+        font-size: 11px;
+    }
+    .step-circle {
+        width: 26px;
+        height: 26px;
+        font-size: 13px;
+    }
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+    background: linear-gradient(120deg, #0a2540 0%, #3b82f6 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.caplogy-wrapper {
+    width: 100%;
+    padding: 40px;
+    box-sizing: border-box;
+}
+
+.caplogy-container {
+    background: white;
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 8px 32px rgba(10, 37, 64, 0.2);
+    max-width: 600px;
+    margin: auto;
+}
+
+h1 {
+    text-align: center;
+    color: #0a2540;
+    margin-bottom: 30px;
+}
+
+label {
+    margin-top: 14px;
+    font-weight: 600;
+    color: #0a2540;
+}
+
+input[type="text"],
+input[type="date"] {
+    width: 100%;
+    padding: 12px;
+    margin-top: 4px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    background: #f8fafc;
+}
+
+button {
+    padding: 12px;
+    margin-top: 24px;
+    border: none;
+    border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button[type="submit"] {
+    background: linear-gradient(90deg, #0a2540 0%, #3b82f6 100%);
+    color: white;
+}
+
+button[type="button"] {
+    background-color: #3b82f6;
+    color: white;
+    margin-left: 10px;
+}
+
+select {
+    width: 100%;
+    padding: 12px;
+    margin-top: 4px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    background: #f8fafc;
+    box-sizing: border-box;
+}
+
+/* Loader overlay for all actions */
+.loader-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.7);
+    z-index: 9999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+.spinner {
+    border: 8px solid #f3f3f3;
+    border-top: 8px solid #3498db;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    animation: spin 1s linear infinite;
+}
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}

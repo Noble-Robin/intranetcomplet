@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intranet Caplogy</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap">
+    <link rel="stylesheet" href="{% static 'homepage/moodle_style.css' %}">
+</head>
+<body>
+    <div class="moodle-header">
+        <h1>Bienvenue sur l'Intranet Caplogy</h1>
+        <p>Choisissez une application&nbsp;:</p>
+    </div>
+    <div class="app-links">
+        <a class="app-card autodocs" href="/autodocs/">
+            <div class="icon">📄</div>
+            <div class="title">AutoDocs</div>
+            <div class="desc">Gestion documentaire</div>
+        </a>
+        <a class="app-card moodle" href="/moodle/">
+            <div class="icon">🎓</div>
+            <div class="title">Moodle</div>
+            <div class="desc">Plateforme pédagogique</div>
+        </a>
+    </div>
+    <footer class="moodle-footer">
+        <p>&copy; 2025 Caplogy - Intranet</p>
+    </footer>
+</body>
+</html>
