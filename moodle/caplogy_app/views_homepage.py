@@ -1,5 +1,6 @@
 from django.shortcuts import render
 
+from django.contrib.auth.decorators import login_required
 from AutoDocs.utils_group_required import group_required
 
 @login_required
