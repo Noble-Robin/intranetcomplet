@@ -7,10 +7,12 @@ import time
 import requests
 
 from django.contrib.auth import login as dj_login, logout as dj_logout
+
 from django.contrib.auth.decorators import login_required, user_passes_test
 from .services.user_service import UserService
 from .services.moodle_api import MoodleAPI
 from .services.nextcloud_api import NextcloudAPI
+from ..AutoDocs.utils_group_required import group_required
 
 us = UserService()
 
@@ -40,9 +42,6 @@ def login_view(request):
     if request.user.is_authenticated:
         return redirect('home')
     return render(request, 'caplogy_app/login.html')
-
-@login_required
-from ..AutoDocs.utils_group_required import group_required
 
 @login_required
 @group_required('admin', 'moodle')
