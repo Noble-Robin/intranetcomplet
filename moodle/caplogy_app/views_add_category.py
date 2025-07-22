@@ -5,7 +5,7 @@ from .models import SchoolImage
 from .services.moodle_api import MoodleAPI
 import os
 
-from ..AutoDocs.utils_group_required import group_required
+from AutoDocs.utils_group_required import group_required
 
 @login_required
 @group_required('admin')
