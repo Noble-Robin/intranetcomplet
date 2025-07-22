@@ -25,16 +25,16 @@
       {% for u in users %}
       <tr>
         <td>{{ u.username }}</td>
-        <td>{{ u.role }}</td>
+        <td>{{ u.groups|join:', ' }}</td>
         <td>
           {% if u.id %}
           <form method="post" style="display:inline;">
             {% csrf_token %}
             <input type="hidden" name="user_id" value="{{ u.id }}">
             <select name="new_role">
-              <option value="none" {% if u.role == 'none' %}selected{% endif %}>Aucun accès</option>
-              <option value="user" {% if u.role == 'user' %}selected{% endif %}>Utilisateur</option>
-              <option value="admin" {% if u.role == 'admin' %}selected{% endif %}>Administrateur</option>
+              {% for group in managed_groups %}
+                <option value="{{ group }}" {% if group in u.groups %}selected{% endif %}>{{ group|title }}</option>
+              {% endfor %}
             </select>
             <button type="submit" name="change_role" class="btn btn-sm">Valider</button>
           </form>
