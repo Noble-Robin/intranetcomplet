@@ -45,8 +45,8 @@ TEMPLATES = [
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
             BASE_DIR / 'caplogy_app' / 'templates',
-            BASE_DIR.parent / 'homepage' / 'templates',
-            BASE_DIR.parent / 'AutoDocs' / 'myproject' / 'templates',
+            BASE_DIR / 'homepage' / 'templates',
+            BASE_DIR / 'AutoDocs' / 'myproject' / 'templates',
         ],
         'APP_DIRS': True,
         'OPTIONS': {
