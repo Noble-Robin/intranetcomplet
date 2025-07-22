@@ -20,8 +20,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function loadCategories(parentId, selectElement) {
         const url = parentId === 0 
-            ? '/api/categories/' 
-            : `/api/categories/?parent=${parentId}`;
+            ? '/moodle/api/categories/' 
+            : `/moodle/api/categories/?parent=${parentId}`;
             
         fetch(url)
             .then(response => {
@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Si une catégorie est sélectionnée, charger les sous-catégories
         if (categoryId && categorySelects[level + 1]) {
-            const url = `/api/categories/?parent=${categoryId}`;
+            const url = `/moodle/api/categories/?parent=${categoryId}`;
             fetch(url)
                 .then(response => {
                     if (!response.ok) {

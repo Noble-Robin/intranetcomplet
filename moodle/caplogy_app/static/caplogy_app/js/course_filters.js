@@ -166,7 +166,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function loadSubcategories(parent, target, placeholder) {
         target.innerHTML = `<option value="">${placeholder}</option>`
         if (!parent.value) return
-        fetch(`/api/categories/?parent=${parent.value}`)
+        fetch(`/moodle/api/categories/?parent=${parent.value}`)
             .then(r => r.json())
             .then(json => {
                 json.categories.forEach(cat => {
@@ -184,7 +184,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (yearFilter.value) p.set('year', yearFilter.value)
         if (formationFilter.value) p.set('formation', formationFilter.value)
         if (searchFilter.value) p.set('search', searchFilter.value)
-        fetch(`/api/courses/?${p.toString()}`)
+        fetch(`/moodle/api/courses/?${p.toString()}`)
             .then(r => r.json())
             .then(json => {
                 tableBody.innerHTML = ''
