@@ -23,6 +23,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'caplogy_app',
+    'homepage',
+    'AutoDocs.myproject',
 ]
 
 MIDDLEWARE = [
@@ -40,7 +42,11 @@ ROOT_URLCONF = 'caplogy_project.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'caplogy_app' / 'templates'],
+        'DIRS': [
+            BASE_DIR / 'caplogy_app' / 'templates',
+            BASE_DIR.parent / 'homepage' / 'templates',
+            BASE_DIR.parent / 'AutoDocs' / 'myproject' / 'templates',
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
