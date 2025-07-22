@@ -109,8 +109,8 @@
                 <h2>Prévisualisation</h2>
                 {% if preview %}
                     <div style="margin-bottom:16px;">
+                        <div style="font-size:11px;color:#c00;word-break:break-all;">DEBUG photo: {{ preview.photo|safe }}</div>
                         <img src="{{ preview.photo }}" alt="Photo" style="max-width:180px;max-height:180px;border-radius:8px;box-shadow:0 2px 8px #aaa;">
-                        <div style="font-size:12px;color:#888;word-break:break-all;">{{ photo }}</div>
                     </div>
                 {% endif %}
                 <div style="width:100%;">

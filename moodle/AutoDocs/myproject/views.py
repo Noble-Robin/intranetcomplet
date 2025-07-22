@@ -421,8 +421,18 @@ def index(request):
 
 
                 # logo
-                "logo": download_image_to_static(entreprise_data.get("logo", "") or user_data.get("logo", ""), logo_path),
-                "cachet": download_image_to_static(entreprise_data.get("cachet", "") or user_data.get("cachet", ""), cachet_path),
+
+                # Sécurisation : ne jamais passer une liste à download_image_to_static
+                "logo": download_image_to_static(
+                    (entreprise_data.get("logo", "") if isinstance(entreprise_data.get("logo", ""), str) else "")
+                    or (user_data.get("logo", "") if isinstance(user_data.get("logo", ""), str) else ""),
+                    logo_path
+                ),
+                "cachet": download_image_to_static(
+                    (entreprise_data.get("cachet", "") if isinstance(entreprise_data.get("cachet", ""), str) else "")
+                    or (user_data.get("cachet", "") if isinstance(user_data.get("cachet", ""), str) else ""),
+                    cachet_path
+                ),
 
                 # date
                 "date_document": date.today().strftime("%d/%m/%Y"),
