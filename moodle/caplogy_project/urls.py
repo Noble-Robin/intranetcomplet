@@ -6,6 +6,7 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('login/', include('caplogy_app.urls')),
     path('', include('homepage.urls')),
     path('moodle/', include('caplogy_app.urls')),
     path('autodocs/', include('AutoDocs.myproject.urls')),
