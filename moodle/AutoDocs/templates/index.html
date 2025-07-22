@@ -37,14 +37,10 @@
     </div>
     <div class="main-flex-wrapper">
         <div class="caplogy-container">
-
             <div class="caplogy-header">
                 <img src="{% static 'autodocs/logo.png' %}" alt="Logo Caplogy" />
                 <h1>Caplogy</h1>
             </div>
-            <nav class="navbar-autodocs" style="width:calc(100% + 40px);margin-left:-20px;margin-bottom:25px;background:linear-gradient(90deg,#e3eafc 0%,#f8f9fa 100%);padding:18px 0 18px 0;box-shadow:0 4px 12px rgba(0,0,0,0.07);border-radius:12px 12px 0 0;display:flex;align-items:center;justify-content:center;">
-                <span style="font-weight:bold;color:#1a237e;font-size:1.25em;letter-spacing:0.5px;">Générateur de documents</span>
-            </nav>
 
             <form method="post" id="doc-form">
                 {% csrf_token %}
@@ -98,64 +94,69 @@
             <p style="color: red; font-weight: bold;">{{ error_message }}</p>
         {% endif %}
 
-        <div class="preview-panel">
+        <div class="preview-panel" style="display: flex; flex-direction: column; align-items: flex-start;">
             <h2>Prévisualisation</h2>
             {% if preview %}
-                {% if type_doc == "contrat_cdi" %}
-                    <p><strong>Civilité :</strong> {{ preview.civilite }}</p>
-                    <p><strong>Nom :</strong> {{ preview.nom }}</p>
-                    <p><strong>Prénom :</strong> {{ preview.prenom }}</p>
-                    <p><strong>Date de naissance :</strong> {{ preview.date_de_naissance }}</p>
-                    <p><strong>Lieu de naissance :</strong> {{ preview.lieu_de_naissance }}</p>
-                    <p><strong>Nationalité :</strong> {{ preview.nationalite }}</p>
-                    <p><strong>Adresse :</strong> {{ preview.adresse_maison }}</p>
-                    <p><strong>Numéro de sécurité sociale :</strong> {{ preview.num_secu }}</p>
-                    <p><strong>Titre de séjour :</strong> {{ preview.titre_sejour }}</p>
-                    <p><strong>Numéro de séjour :</strong> {{ preview.num_sejour }}</p>
-                    <p><strong>Date de validité du séjour :</strong> {{ preview.date_valable_sejour }}</p>
-                    <p><strong>Poste :</strong> {{ preview.poste }}</p>
-                    <p><strong>Salaire net :</strong> {{ preview.salaire_net }}</p>
-                    <p><strong>Salaire brut annuel :</strong> {{ preview.salaire_brut }}</p>
-                    <p><strong>Salaire brut mensuel :</strong> {{ preview.salaire_brut_mois }}</p>
-                    <p><strong>Date du poste :</strong> {{ preview.date_poste }}</p>
-                    <p><strong>Position :</strong> {{ preview.position }}</p>
-                    <p><strong>Coefficient :</strong> {{ preview.coefficient }}</p>
-                    <p><strong>Lieu de travail :</strong> {{ preview.lieu_de_travail }}</p>
-                    <p><strong>Limitation géographique régionale :</strong> {{ preview.limit_geo_region }}</p>
-                    <p><strong>Nom de l'entreprise :</strong> {{ preview.entreprise_nom }}</p>
-
-                {% elif type_doc == "attestation_employeur" %}
-                    <p><strong>Civilité :</strong> {{ preview.civilite }}</p>
-                    <p><strong>Nom :</strong> {{ preview.nom }}</p>
-                    <p><strong>Prénom :</strong> {{ preview.prenom }}</p>
-                    <p><strong>Poste :</strong> {{ preview.poste }}</p>
-                    <p><strong>Date du poste :</strong> {{ preview.date_poste  }}</p>
-                    <p><strong>Entreprise :</strong> {{ preview.entreprise_nom }}</p>
-
-                {% elif type_doc == "attestation_de_remise_de_materiel" %}
-                    <p><strong>Civilité :</strong> {{ preview.civilite }}</p>
-                    <p><strong>Nom :</strong> {{ preview.nom }}</p>
-                    <p><strong>Prénom :</strong> {{ preview.prenom }}</p>
-                    <p><strong>Poste :</strong> {{ preview.poste }}</p>
-                    <p><strong>Matériel :</strong> {{ preview.marque }} - {{ preview.cpu }}</p>
-                    <p><strong>N° Série :</strong> {{ preview.numero_serie }}</p>
-                    <p><strong>RAM :</strong> {{ preview.ram }}</p>
-                    <p><strong>Stockage :</strong> {{ preview.ssd }}</p>
-                    <p><strong>Valeur Neuf :</strong> {{ preview.valeur_neuf }}</p>
-                {% endif %}
-
-                <form method="post" id="generate-form">
-                    {% csrf_token %}
-                    <input type="hidden" name="prenom" value="{{ preview.prenom }}">
-                    <input type="hidden" name="nom" value="{{ preview.nom }}">
-                    <input type="hidden" name="type_doc" value="{{ type_doc }}">
-                    <input type="hidden" name="generate" value="1">
-                    <button type="submit" name="action" value="generate" id="generate-btn">Accepter</button>
-                </form>
-
-            {% else %}
-                <p>Aucune donnée à afficher.</p>
+                <div style="margin-bottom:16px;">
+                    <img src="{{ preview.photo }}" alt="Photo" style="max-width:180px;max-height:180px;border-radius:8px;box-shadow:0 2px 8px #aaa;">
+                    <div style="font-size:12px;color:#888;word-break:break-all;">{{ photo }}</div>
+                </div>
             {% endif %}
+            <div style="width:100%;">
+                {% if preview %}
+                    {% if type_doc == "contrat_cdi" %}
+                        <p><strong>Civilité :</strong> {{ preview.civilite }}</p>
+                        <p><strong>Nom :</strong> {{ preview.nom }}</p>
+                        <p><strong>Prénom :</strong> {{ preview.prenom }}</p>
+                        <p><strong>Date de naissance :</strong> {{ preview.date_de_naissance }}</p>
+                        <p><strong>Lieu de naissance :</strong> {{ preview.lieu_de_naissance }}</p>
+                        <p><strong>Nationalité :</strong> {{ preview.nationalite }}</p>
+                        <p><strong>Adresse :</strong> {{ preview.adresse_maison }}</p>
+                        <p><strong>Numéro de sécurité sociale :</strong> {{ preview.num_secu }}</p>
+                        <p><strong>Titre de séjour :</strong> {{ preview.titre_sejour }}</p>
+                        <p><strong>Numéro de séjour :</strong> {{ preview.num_sejour }}</p>
+                        <p><strong>Date de validité du séjour :</strong> {{ preview.date_valable_sejour }}</p>
+                        <p><strong>Poste :</strong> {{ preview.poste }}</p>
+                        <p><strong>Salaire net :</strong> {{ preview.salaire_net }}</p>
+                        <p><strong>Salaire brut annuel :</strong> {{ preview.salaire_brut }}</p>
+                        <p><strong>Salaire brut mensuel :</strong> {{ preview.salaire_brut_mois }}</p>
+                        <p><strong>Date du poste :</strong> {{ preview.date_poste }}</p>
+                        <p><strong>Position :</strong> {{ preview.position }}</p>
+                        <p><strong>Coefficient :</strong> {{ preview.coefficient }}</p>
+                        <p><strong>Lieu de travail :</strong> {{ preview.lieu_de_travail }}</p>
+                        <p><strong>Limitation géographique régionale :</strong> {{ preview.limit_geo_region }}</p>
+                        <p><strong>Nom de l'entreprise :</strong> {{ preview.entreprise_nom }}</p>
+                    {% elif type_doc == "attestation_employeur" %}
+                        <p><strong>Civilité :</strong> {{ preview.civilite }}</p>
+                        <p><strong>Nom :</strong> {{ preview.nom }}</p>
+                        <p><strong>Prénom :</strong> {{ preview.prenom }}</p>
+                        <p><strong>Poste :</strong> {{ preview.poste }}</p>
+                        <p><strong>Date du poste :</strong> {{ preview.date_poste  }}</p>
+                        <p><strong>Entreprise :</strong> {{ preview.entreprise_nom }}</p>
+                    {% elif type_doc == "attestation_de_remise_de_materiel" %}
+                        <p><strong>Civilité :</strong> {{ preview.civilite }}</p>
+                        <p><strong>Nom :</strong> {{ preview.nom }}</p>
+                        <p><strong>Prénom :</strong> {{ preview.prenom }}</p>
+                        <p><strong>Poste :</strong> {{ preview.poste }}</p>
+                        <p><strong>Matériel :</strong> {{ preview.marque }} - {{ preview.cpu }}</p>
+                        <p><strong>N° Série :</strong> {{ preview.numero_serie }}</p>
+                        <p><strong>RAM :</strong> {{ preview.ram }}</p>
+                        <p><strong>Stockage :</strong> {{ preview.ssd }}</p>
+                        <p><strong>Valeur Neuf :</strong> {{ preview.valeur_neuf }}</p>
+                    {% endif %}
+
+                    <form method="post" id="generate-form">
+                        {% csrf_token %}
+                        <input type="hidden" name="prenom" value="{{ preview.prenom }}">
+                        <input type="hidden" name="nom" value="{{ preview.nom }}">
+                        <input type="hidden" name="type_doc" value="{{ type_doc }}">
+                        <input type="hidden" name="generate" value="1">
+                        <button type="submit" name="action" value="generate" id="generate-btn">Accepter</button>
+                    </form>
+                {% else %}
+                    <p>Aucune donnée à afficher.</p>
+                {% endif %}
+            </div>
         </div>
     </div>
 

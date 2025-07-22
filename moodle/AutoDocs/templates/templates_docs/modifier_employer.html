@@ -161,7 +161,7 @@
                         <option value="Madame" {% if form_data.civilite == "Madame" %}selected{% endif %}>Madame</option>
                     </select>
 
-                    <label>Date de naissance (pas encore disponible):</label>
+                    <label>Date de naissance :</label>
                     <input type="date" name="date_de_naissance" value="{{ form_data.date_de_naissance }}">
 
                     <label>Lieu de naissance :</label>
@@ -180,7 +180,14 @@
                     <input type="text" name="email" value="{{ form_data.email }}">
 
                     <label>Photo:</label>
-                    <input type="text" name="photo" value="{{ form_data.photo }}">
+                    <input type="file" name="photo" accept="image/*" id="photo-input">
+                    {% if form_data.photo and form_data.photo|slice:":4" == "http" %}
+                        <img id="photo-preview" src="{{ form_data.photo }}" alt="Photo actuelle" style="max-width:100px;max-height:100px;margin-top:8px;">
+                    {% elif photo and photo|slice:":4" == "http" %}
+                        <img id="photo-preview" src="{{ photo }}" alt="Photo" style="max-width:100px;max-height:100px;margin-top:8px;">
+                    {% else %}
+                        <img id="photo-preview" src="#" alt="Aperçu photo" style="display:none;max-width:100px;max-height:100px;margin-top:8px;">
+                    {% endif %}
 
                     <label>Matricule :</label>
                     <input type="text" name="matricule" value="{{ form_data.matricule }}">
@@ -201,13 +208,13 @@
                     <label>Adresse :</label>
                     <input type="text" name="adresse_maison" value="{{ form_data.adresse_maison }}">
 
-                    <label>Numéro de sécurité sociale (pas encore disponible) :</label>
+                    <label>Numéro de sécurité sociale  :</label>
                     <input type="text" name="num_secu" value="{{ form_data.num_secu }}">
 
-                    <label>Titre de séjour (pas encore disponible) :</label>
+                    <label>Titre de séjour  :</label>
                     <input type="text" name="titre_sejour" value="{{ form_data.titre_sejour }}">
 
-                    <label>Numéro de séjour (pas encore disponible) :</label>
+                    <label>Numéro de séjour :</label>
                     <input type="text" name="num_sejour" value="{{ form_data.num_sejour }}">
 
                     <label>Date de validité du séjour (pas encore disponible) :</label>
@@ -257,10 +264,10 @@
                     <label>Coefficient :</label>
                     <input type="text" name="coefficient" value="{{ form_data.coefficient }}">
 
-                    <label>Lieu de travail (pas encore disponible):</label>
+                    <label>Lieu de travail :</label>
                     <input type="text" name="lieu_de_travail" value="{{ form_data.lieu_de_travail }}">
 
-                    <label>Limitation géographique régionale (pas encore disponible):</label>
+                    <label>Limitation géographique régionale :</label>
                     <input type="text" name="limit_geo_region" value="{{ form_data.limit_geo_region }}">
 
                     <label>Spécialité :</label>
@@ -283,13 +290,13 @@
                     <input type="text" name="type_contrat" value="{{ form_data.type_contrat }}">
 
                     <label>Salaire brute :</label>
-                    <input type="text" name="salaire_brut" value="{{ form_data.salaire_brut }}">
+                    <input type="text" name="salaire_brut" value="${{ form_data.salaire_brut|cut:'$' }}">
 
-                    <label>Salaire brute mensuel (pas encore disponible):</label>
-                    <input type="text" name="salaire_brut_mois" value="{{ form_data.salaire_brut_mois }}">
+                    <label>Salaire brute mensuel :</label>
+                    <input type="text" name="salaire_brut_mois" value="${{ form_data.salaire_brut_mois|cut:'$' }}">
 
                     <label>Salaire net :</label>
-                    <input type="text" name="salaire_net" value="{{ form_data.salaire_net }}">
+                    <input type="text" name="salaire_net" value="${{ form_data.salaire_net|cut:'$' }}">
 
                     <label>Entreprise :</label>
                     <select name="entreprise_id">
@@ -311,6 +318,23 @@
         </div>
     </div>
     <script>
+        // Aperçu de la photo uploadée
+        document.addEventListener('DOMContentLoaded', function() {
+            var photoInput = document.getElementById('photo-input');
+            var photoPreview = document.getElementById('photo-preview');
+            if(photoInput && photoPreview) {
+                photoInput.addEventListener('change', function(e) {
+                    if (e.target.files && e.target.files[0]) {
+                        var reader = new FileReader();
+                        reader.onload = function(ev) {
+                            photoPreview.src = ev.target.result;
+                            photoPreview.style.display = 'block';
+                        };
+                        reader.readAsDataURL(e.target.files[0]);
+                    }
+                });
+            }
+        });
         // Affiche le loader lors du clic sur "Enregistrer les modifications" seulement si tous les champs requis sont remplis
         document.addEventListener('DOMContentLoaded', function() {
             var submitBtn = document.querySelector('button[type="submit"]');
