@@ -71,25 +71,7 @@
 
             <label for="prenom">Prénom :</label>
             <select id="prenom" name="prenom" required>
-        <div class="form-preview-flex">
-            <div class="form-panel">
-                <form method="post" id="doc-form">
-                    {% csrf_token %}
-                    <label for="type_doc">Type de document :</label>
-                    <select id="type_doc" name="type_doc" required>
-                        <option value="attestation_de_remise_de_materiel" {% if type_doc == "attestation_de_remise_de_materiel" %}selected{% endif %}>
-                            Attestation de remise de matériel
-                        </option>
-                        <option value="attestation_employeur" {% if type_doc == "attestation_employeur" %}selected{% endif %}>
-                            Attestation employeur
-                        </option>
-                        <option value="contrat_cdi" {% if type_doc == "contrat_cdi" %}selected{% endif %}>
-                            Contrat CDI
-                        </option>
-                    </select>
-
-                    <label for="prenom">Prénom :</label>
-                    <select id="prenom" name="prenom" required>
+        
                         <option value="">-- Choisir un prénom --</option>
                         {% for prenom in prenoms %}
                             <option value="{{ prenom }}" {% if prenom == select_prenom %}selected{% endif %}>{{ prenom }}</option>
