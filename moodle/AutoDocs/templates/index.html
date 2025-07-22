@@ -1,7 +1,5 @@
 
-{% extends 'caplogy_app/base.html' %}
 {% load static %}
-{% block extra_css %}
 <link rel="stylesheet" href="{% static 'autodocs/home.css' %}">
 <style>
     /* Loader styles */
@@ -26,9 +24,36 @@
         0% { transform: rotate(0deg);}
         100% { transform: rotate(360deg);}
     }
+    .btn-retour-root {
+        display:inline-block;
+        margin: 24px 0 18px 0;
+        padding: 12px 32px;
+        background: linear-gradient(90deg,#1a237e 0%,#1976d2 100%);
+        color: #fff;
+        font-weight: 600;
+        border: none;
+        border-radius: 8px;
+        font-size: 1.1em;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+        cursor: pointer;
+        transition: background 0.2s;
+        text-decoration: none;
+    }
+    .btn-retour-root:hover {
+        background: linear-gradient(90deg,#1976d2 0%,#1a237e 100%);
+    }
 </style>
-{% endblock %}
-{% block content %}
+<div class="loader-overlay" id="loader-overlay">
+    <div class="spinner"></div>
+</div>
+<div class="main-flex-wrapper">
+    <div class="caplogy-container">
+        <a href="/" class="btn-retour-root">&larr; Retour à l'accueil</a>
+        <div class="caplogy-header">
+            <img src="{% static 'autodocs/logo.png' %}" alt="Logo Caplogy" />
+            <h1>Caplogy</h1>
+        </div>
+        <!-- ...le reste du contenu inchangé... -->
     <div class="loader-overlay" id="loader-overlay">
         <div class="spinner"></div>
     </div>
