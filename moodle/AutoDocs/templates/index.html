@@ -37,10 +37,15 @@
     </div>
     <div class="main-flex-wrapper">
         <div class="caplogy-container">
+
             <div class="caplogy-header">
                 <img src="{% static 'autodocs/logo.png' %}" alt="Logo Caplogy" />
                 <h1>Caplogy</h1>
             </div>
+            <nav class="navbar-autodocs" style="width:100%;background:#f8f9fa;padding:10px 0 10px 0;margin-bottom:20px;box-shadow:0 2px 4px rgba(0,0,0,0.03);display:flex;align-items:center;">
+                <!-- Pas de bouton Accueil ici -->
+                <span style="margin-left:30px;font-weight:bold;color:#333;font-size:1.1em;">Générateur de documents</span>
+            </nav>
 
             <form method="post" id="doc-form">
                 {% csrf_token %}
