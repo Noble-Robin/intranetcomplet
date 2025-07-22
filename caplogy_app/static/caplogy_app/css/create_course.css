@@ -1,0 +1,1028 @@
+/* Styles pour la page de création de cours */
+
+/* Variables CSS pour les couleurs */
+:root {
+    --color-background: #FFFFFF;
+    --color-surface: #F4F6F8;
+    --color-border: #E5E7EB;
+    --color-text: #0F172A;
+    --color-text-primary: #0F172A;
+    --color-text-secondary: #475569;
+    --color-accent: #00A8E8;
+    --color-danger: #EF4444;
+    --color-success: #22C55E;
+    --color-warning: #f57c00;
+    --hover-bg: #F1F5F9;
+}
+
+/* Thème sombre */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --color-background: #0F172A;
+        --color-surface: #1E293B;
+        --color-border: #334155;
+        --color-text: #F8FAFC;
+        --color-text-primary: #F8FAFC;
+        --color-text-secondary: #94A3B8;
+        --color-accent: #00A8E8;
+        --color-danger: #EF4444;
+        --color-success: #22C55E;
+        --color-warning: #ff9800;
+        --hover-bg: #334155;
+    }
+}
+
+/* Forcer le thème sombre avec une classe */
+.dark-theme {
+    --color-background: #0F172A;
+    --color-surface: #1E293B;
+    --color-border: #334155;
+    --color-text: #F8FAFC;
+    --color-text-primary: #F8FAFC;
+    --color-text-secondary: #94A3B8;
+    --color-accent: #00A8E8;
+    --color-danger: #EF4444;
+    --color-success: #22C55E;
+    --color-warning: #ff9800;
+    --hover-bg: #334155;
+}
+
+.create-course-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem;
+    background: var(--color-background);
+    color: var(--color-text);
+    min-height: calc(100vh - 80px);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Header */
+.header-section {
+    text-align: center;
+    margin-bottom: 3rem;
+    padding: 2rem 0;
+    background: linear-gradient(135deg, var(--color-accent) 0%, #1d4ed8 100%);
+    border-radius: 1rem;
+    color: white;
+    box-shadow: 0 8px 32px rgba(0, 168, 232, 0.2);
+}
+
+.header-section h1 {
+    font-size: 2.5rem;
+    margin: 0 0 0.5rem 0;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+}
+
+.subtitle {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    margin: 0;
+    font-weight: 300;
+}
+
+/* Form Sections */
+.form-section {
+    background: var(--color-surface);
+    border-radius: 1rem;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    border: 1px solid var(--color-border);
+    transition: all 0.3s ease;
+}
+
+.form-section:hover {
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+    transform: translateY(-2px);
+}
+
+.section-header {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--color-border);
+}
+
+.section-header h2 {
+    font-size: 1.5rem;
+    color: var(--color-text-primary);
+    margin: 0 0 0.5rem 0;
+    font-weight: 600;
+}
+
+.section-description {
+    color: var(--color-text-secondary);
+    margin: 0;
+    font-size: 0.95rem;
+}
+
+/* Form Fields */
+.form-field {
+    margin-bottom: 1.5rem;
+}
+
+.form-field label {
+    display: block;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+}
+
+.modern-input,
+.modern-select {
+    width: 100%;
+    padding: 0.875rem 1rem;
+    border: 2px solid var(--color-border);
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    background: var(--color-surface);
+    color: var(--color-text-primary);
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+.modern-input:focus,
+.modern-select:focus {
+    outline: none;
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px rgba(0, 168, 232, 0.1);
+}
+
+.modern-input::placeholder {
+    color: var(--color-text-secondary);
+}
+
+/* Category Container */
+.category-container {
+    display: grid;
+    gap: 1rem;
+}
+
+@media (min-width: 768px) {
+    .category-container {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    }
+}
+
+/* Sections Management */
+.sections-container {
+    position: relative;
+}
+
+.sections-list {
+    min-height: 100px;
+    margin-bottom: 1.5rem;
+}
+
+.section-item {
+    background: var(--color-background);
+    border: 2px solid var(--color-border);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    position: relative;
+    transition: all 0.3s ease;
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.section-item:hover {
+    border-color: var(--color-accent);
+    box-shadow: 0 4px 16px color-mix(in srgb, var(--color-accent) 20%, transparent);
+}
+
+.section-header-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.section-number {
+    background: linear-gradient(135deg, var(--color-accent) 0%, #1d4ed8 100%);
+    color: white;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+}
+
+.section-title-input {
+    flex: 1;
+    padding: 0.75rem 1rem;
+    border: 2px solid var(--color-border);
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    background: var(--color-background);
+    color: var(--color-text-primary);
+    transition: all 0.3s ease;
+}
+
+.section-title-input:focus {
+    outline: none;
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent) 20%, transparent);
+}
+
+.section-actions {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    margin-top: 1rem;
+}
+
+.resource-btn {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    border: none;
+    padding: 0.625rem 1.25rem;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.resource-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.delete-section-btn {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: white;
+    border: none;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.delete-section-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+/* Add Section Button */
+.add-section-btn {
+    width: 100%;
+    background: var(--color-accent);
+    color: white;
+    border: none;
+    padding: 1.25rem 2rem;
+    border-radius: 1rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    box-shadow: 0 4px 16px color-mix(in srgb, var(--color-accent) 30%, transparent);
+}
+
+#add-section.add-section-btn {
+    width: 100%;
+    background: var(--color-accent);
+    color: white;
+    border: none;
+    padding: 1.25rem 2rem;
+    border-radius: 1rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    box-shadow: 0 4px 16px color-mix(in srgb, var(--color-accent) 30%, transparent);
+    margin-top: 0;
+}
+
+.add-section-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px color-mix(in srgb, var(--color-accent) 40%, transparent);
+    background: color-mix(in srgb, var(--color-accent) 90%, black);
+}
+
+#add-section.add-section-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px color-mix(in srgb, var(--color-accent) 40%, transparent);
+    background: color-mix(in srgb, var(--color-accent) 90%, black);
+}
+
+.btn-icon {
+    font-size: 1.3rem;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    padding: 2rem 0;
+}
+
+.btn-primary,
+.btn-secondary {
+    padding: 0.875rem 2rem;
+    border-radius: 0.75rem;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-width: 140px;
+    justify-content: center;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--color-accent) 0%, #1d4ed8 100%);
+    color: white;
+    box-shadow: 0 4px 16px color-mix(in srgb, var(--color-accent) 30%, transparent);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px color-mix(in srgb, var(--color-accent) 40%, transparent);
+}
+
+.btn-secondary {
+    background: var(--color-surface);
+    color: var(--color-text-secondary);
+    border: 2px solid var(--color-border);
+}
+
+.btn-secondary:hover {
+    background: var(--hover-bg);
+    border-color: var(--color-border);
+    transform: translateY(-1px);
+}
+
+/* Modal Styles */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    backdrop-filter: blur(4px);
+}
+
+.modal-overlay.active {
+    display: flex;
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.modal-container {
+    background: var(--color-surface);
+    border-radius: 1rem;
+    padding: 0;
+    width: 90%;
+    max-width: 600px;
+    max-height: 80vh;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+    animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid #e5e7eb;
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+}
+
+.modal-header h3 {
+    color: var(--color-text-primary);
+    font-size: 1.25rem;
+    margin: 0;
+    font-weight: 600;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--color-text-secondary);
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    transition: all 0.3s ease;
+    width: 2.5rem;
+    height: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-close:hover {
+    color: var(--color-text-primary);
+    background: var(--hover-bg);
+}
+
+.modal-body {
+    padding: 1.5rem 2rem;
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+.file-browser {
+    min-height: 200px;
+}
+
+.file-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.file-list li {
+    padding: 0.875rem 1rem;
+    cursor: pointer;
+    border-radius: 0.5rem;
+    margin-bottom: 0.25rem;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+}
+
+.file-list li:hover {
+    background: linear-gradient(135deg, var(--color-accent) 0%, #1d4ed8 100%);
+    color: white;
+    transform: translateX(4px);
+}
+
+/* Styles pour les ressources existantes */
+.existing-resources {
+    margin: 1rem 0;
+    padding: 1rem;
+    background: var(--color-background);
+    border-radius: 0.5rem;
+    border: 1px solid var(--color-border);
+}
+
+.existing-resource {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    margin: 0.25rem 0;
+    background: white;
+    border-radius: 0.25rem;
+    border: 1px solid #e5e7eb;
+    font-size: 0.9rem;
+}
+
+.resource-icon {
+    color: var(--color-accent);
+    font-size: 1rem;
+}
+
+.resource-name {
+    flex: 1;
+    font-weight: 500;
+    color: var(--color-text);
+}
+
+.resource-type {
+    color: var(--color-text-secondary);
+    font-size: 0.8rem;
+    font-style: italic;
+}
+
+.resource-link {
+    color: var(--color-accent);
+    text-decoration: none;
+    padding: 0.25rem;
+    border-radius: 0.25rem;
+    transition: background-color 0.2s;
+}
+
+.resource-link:hover {
+    background-color: var(--color-background);
+}
+
+/* Correction modale Nextcloud en dark mode */
+:root[data-theme="dark"] .modal-container {
+    background: #1E293B !important;
+    color: #F8FAFC !important;
+}
+:root[data-theme="dark"] .modal-header {
+    background: #1E293B !important;
+    color: #F8FAFC !important;
+}
+:root[data-theme="dark"] .modal-body {
+    background: #1E293B !important;
+    color: #F8FAFC !important;
+}
+
+/* Correction couleur des liens de ressource en dark mode */
+:root[data-theme="dark"] .resource-link {
+    color: var(--color-accent) !important;
+    opacity: 1 !important;
+}
+
+:root[data-theme="dark"] .existing-resource {
+    background: #1E293B !important;
+    color: #F8FAFC !important;
+}
+
+/* Utility Classes */
+.hidden {
+    display: none !important;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .create-course-container {
+        padding: 1rem;
+    }
+    
+    .header-section h1 {
+        font-size: 2rem;
+    }
+    
+    .form-section {
+        padding: 1.5rem;
+    }
+    
+    .section-header-item {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.75rem;
+    }
+    
+    .section-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+    }
+    
+    .modal-container {
+        width: 95%;
+    }
+    
+    .modal-header,
+    .modal-body {
+        padding: 1rem;
+    }
+}
+
+/* Animation for empty state */
+.sections-list:empty::before {
+    content: "Aucune section créée. Cliquez sur 'Ajouter une section' pour commencer !";
+    display: block;
+    text-align: center;
+    padding: 3rem 2rem;
+    color: var(--color-text-secondary);
+    font-style: italic;
+    background: var(--color-surface);
+    border: 2px dashed var(--color-border);
+    border-radius: 1rem;
+    margin-bottom: 1rem;
+}
+
+/* Styles pour les professeurs */
+.current-teachers {
+    margin-bottom: 20px;
+    padding: 15px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.current-teachers h4 {
+    margin: 0 0 10px 0;
+    font-size: 1.1rem;
+    color: var(--color-text);
+}
+
+.teachers-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.teacher-tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 12px;
+    background: var(--color-accent);
+    color: white;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.teacher-tag:hover {
+    background: var(--color-accent);
+    opacity: 0.9;
+}
+
+.teacher-remove {
+    margin-left: 8px;
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 1.2rem;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.teacher-remove:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.1);
+}
+
+.teacher-remove:active {
+    transform: scale(0.9);
+}
+
+/* Styles pour le menu déroulant des professeurs */
+.dropdown-container {
+    position: relative;
+    width: 100%;
+}
+
+.dropdown-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.875rem 1rem;
+    border: 2px solid var(--color-border);
+    border-radius: 0.5rem;
+    background: var(--color-surface);
+    color: var(--color-text);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.dropdown-header:hover {
+    border-color: var(--color-accent);
+}
+
+.dropdown-header.active {
+    border-color: var(--color-accent);
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.dropdown-arrow {
+    font-size: 0.8rem;
+    transition: transform 0.3s ease;
+}
+
+.dropdown-header.active .dropdown-arrow {
+    transform: rotate(180deg);
+}
+
+.dropdown-content {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--color-surface);
+    border: 2px solid var(--color-accent);
+    border-top: none;
+    border-bottom-left-radius: 0.5rem;
+    border-bottom-right-radius: 0.5rem;
+    max-height: 300px;
+    overflow-y: auto;
+    z-index: 1000;
+    display: none;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.dropdown-content.show {
+    display: block;
+}
+
+.dropdown-search {
+    padding: 10px;
+    border-bottom: 1px solid var(--color-border);
+    background: var(--color-surface);
+    position: sticky;
+    top: 0;
+    z-index: 1001;
+}
+
+.dropdown-search input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    background: var(--color-surface);
+    color: var(--color-text);
+    font-size: 0.9rem;
+}
+
+.dropdown-search input:focus {
+    outline: none;
+    border-color: var(--color-accent);
+}
+
+.dropdown-options {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.dropdown-option {
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.dropdown-option:hover {
+    background: var(--color-border);
+}
+
+.dropdown-option.selected {
+    background: var(--color-accent);
+    color: white;
+}
+
+.dropdown-option input[type="checkbox"] {
+    margin-right: 10px;
+    pointer-events: none;
+}
+
+.dropdown-option label {
+    cursor: pointer;
+    font-size: 0.9rem;
+    flex: 1;
+    margin: 0;
+}
+
+/* Styles pour les professeurs sélectionnés */
+.selected-profs {
+    margin-top: 10px;
+    padding: 10px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    min-height: 40px;
+}
+
+.selected-profs h5 {
+    margin: 0 0 8px 0;
+    font-size: 1rem;
+    color: var(--color-text);
+}
+
+.selected-prof-tag {
+    display: inline-flex;
+    align-items: center;
+    margin: 2px 4px;
+    padding: 4px 8px;
+    background: var(--color-success);
+    color: white;
+    border-radius: 15px;
+    font-size: 0.85rem;
+}
+
+.selected-prof-remove {
+    margin-left: 6px;
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 1rem;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.selected-prof-remove:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* Styles pour le thème sombre */
+@media (prefers-color-scheme: dark) {
+    .dropdown-content {
+        background: var(--color-surface);
+        border-color: var(--color-accent);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    }
+    
+    .dropdown-header {
+        background: var(--color-surface);
+        border-color: var(--color-border);
+        color: var(--color-text);
+    }
+    
+    .dropdown-search {
+        background: var(--color-surface);
+        border-color: var(--color-border);
+    }
+    
+    .dropdown-search input {
+        background: var(--color-surface);
+        border-color: var(--color-border);
+        color: var(--color-text);
+    }
+    
+    .dropdown-option {
+        color: var(--color-text);
+    }
+    
+    .dropdown-option:hover {
+        background: var(--hover-bg);
+    }
+    
+    .current-teachers {
+        background: var(--color-surface);
+        border-color: var(--color-border);
+    }
+    
+    .selected-profs {
+        background: var(--color-surface);
+        border-color: var(--color-border);
+    }
+}
+
+/* Styles responsifs pour les professeurs */
+@media (max-width: 768px) {
+    .dropdown-content {
+        max-height: 250px;
+    }
+    
+    .dropdown-options {
+        max-height: 150px;
+    }
+    
+    .selected-profs {
+        padding: 8px;
+    }
+    
+    .selected-prof-tag {
+        font-size: 0.8rem;
+        padding: 3px 6px;
+        margin: 2px 3px;
+    }
+    
+    .teacher-tag {
+        font-size: 0.8rem;
+        padding: 4px 8px;
+        margin: 2px 3px;
+    }
+}
+
+/* Forcer le thème sombre sur le body */
+body.dark-theme {
+    background: var(--color-background);
+    color: var(--color-text);
+}
+
+body.dark-theme .dropdown-content {
+    background: var(--color-surface) !important;
+    border-color: var(--color-accent) !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3) !important;
+}
+
+body.dark-theme .dropdown-header {
+    background: var(--color-surface) !important;
+    border-color: var(--color-border) !important;
+    color: var(--color-text) !important;
+}
+
+body.dark-theme .dropdown-search {
+    background: var(--color-surface) !important;
+    border-color: var(--color-border) !important;
+}
+
+body.dark-theme .dropdown-search input {
+    background: var(--color-surface) !important;
+    border-color: var(--color-border) !important;
+    color: var(--color-text) !important;
+}
+
+body.dark-theme .dropdown-option {
+    color: var(--color-text) !important;
+}
+
+body.dark-theme .dropdown-option:hover {
+    background: var(--hover-bg) !important;
+}
+
+body.dark-theme .current-teachers {
+    background: var(--color-surface) !important;
+    border-color: var(--color-border) !important;
+}
+
+body.dark-theme .selected-profs {
+    background: var(--color-surface) !important;
+    border-color: var(--color-border) !important;
+}
+
+body.dark-theme .form-section {
+    background: var(--color-surface) !important;
+    border-color: var(--color-border) !important;
+}
+
+body.dark-theme .modern-input,
+body.dark-theme .modern-select {
+    background: var(--color-surface) !important;
+    border-color: var(--color-border) !important;
+    color: var(--color-text) !important;
+}
+
+body.dark-theme .modern-input:focus,
+body.dark-theme .modern-select:focus {
+    border-color: var(--color-accent) !important;
+    box-shadow: 0 0 0 3px rgba(0, 168, 232, 0.1) !important;
+}
+
+body.dark-theme .section-header {
+    border-bottom-color: var(--color-border) !important;
+}
+
+body.dark-theme .section-header h2 {
+    color: var(--color-text) !important;
+}
+
+body.dark-theme .section-description {
+    color: var(--color-text-secondary) !important;
+}
+
+body.dark-theme .form-field label {
+    color: var(--color-text) !important;
+}
+
+body.dark-theme .modern-input::placeholder {
+    color: var(--color-text-secondary) !important;
+}
+
+body.dark-theme .selected-profs h5 {
+    color: var(--color-text) !important;
+}
+
+body.dark-theme .current-teachers h4 {
+    color: var(--color-text) !important;
+}

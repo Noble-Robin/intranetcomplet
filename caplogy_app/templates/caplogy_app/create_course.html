@@ -1,0 +1,686 @@
+{% extends 'caplogy_app/base.html' %}
+{% load static %}
+
+{% block title %}{% if is_edit %}Modifier le cours{% else %}Créer un cours{% endif %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'caplogy_app/css/create_course.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="create-course-container">
+    <div class="header-section">
+        <h1>{% if is_edit %}Modifier le cours{% else %}Créer un nouveau cours{% endif %}</h1>
+        <p class="subtitle">{% if is_edit %}Modifiez les informations de votre cours{% else %}Configurez votre cours de manière interactive{% endif %}</p>
+    </div>
+
+    <form method="post" id="course-form" class="course-form">
+        {% csrf_token %}
+        
+        <!-- Section Titre -->
+        <div class="form-section">
+            <div class="section-header">
+                <h2>Informations générales</h2>
+            </div>
+            <div class="form-field">
+                <label for="title">Titre du cours</label>
+                <input type="text" id="title" name="title" required 
+                       placeholder="Entrez le titre de votre cours..." 
+                       value="{% if course %}{{ course.fullname }}{% endif %}"
+                       class="modern-input">
+            </div>
+        </div>
+
+        <!-- Section Emplacement -->
+        <div class="form-section">
+            <div class="section-header">
+                <h2>Emplacement Moodle</h2>
+            </div>
+            <div class="category-container">
+                <div class="form-field">
+                    <label for="cat-level-0">Catégorie principale</label>
+                    <select id="cat-level-0" name="category" class="modern-select">
+                        <option value="">Sélectionnez une catégorie...</option>
+                    </select>
+                </div>
+                <div class="form-field">
+                    <label for="cat-level-1">Sous-catégorie</label>
+                    <select id="cat-level-1" name="subcategory" class="modern-select hidden">
+                        <option value="">Sélectionnez une sous-catégorie...</option>
+                    </select>
+                </div>
+                <div class="form-field">
+                    <label for="cat-level-2">Sous-sous-catégorie</label>
+                    <select id="cat-level-2" name="subsubcategory" class="modern-select hidden">
+                        <option value="">Sélectionnez une sous-sous-catégorie...</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section Prof(s) -->
+        <div class="form-section">
+            <div class="section-header">
+                <h2>Professeur(s) du cours</h2>
+                <p class="section-description">Gérez les professeurs assignés au cours</p>
+            </div>
+            
+            {% if is_edit %}
+                <div id="current-teachers" class="current-teachers">
+                    <h4>Professeurs actuels :</h4>
+                    <div id="current-teachers-list" class="teachers-list">
+                        <em>Chargement...</em>
+                    </div>
+                </div>
+            {% endif %}
+            
+            <div class="form-field">
+                <label for="prof-dropdown">Ajouter des professeurs</label>
+                <div class="dropdown-container">
+                    <div class="dropdown-header" id="prof-dropdown" onclick="toggleProfDropdown()">
+                        <span id="prof-dropdown-text">Sélectionner des professeurs...</span>
+                        <span class="dropdown-arrow">▼</span>
+                    </div>
+                    <div class="dropdown-content" id="prof-dropdown-content">
+                        <div class="dropdown-search">
+                            <input type="text" id="prof-search" placeholder="Rechercher un professeur..." onkeyup="filterProfs()">
+                        </div>
+                        <div class="dropdown-options" id="prof-options">
+                            {% for prof in profs %}
+                                <div class="dropdown-option" data-username="{{ prof.username }}" onclick="toggleProfSelection('{{ prof.username }}', '{{ prof.name }}')">
+                                    <input type="checkbox" id="prof-{{ prof.username }}" value="{{ prof.username }}">
+                                    <label for="prof-{{ prof.username }}">{{ prof.name }} ({{ prof.username }})</label>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="selected-profs" class="selected-profs">
+                    <h5>Professeurs sélectionnés :</h5>
+                    <div id="selected-profs-list"></div>
+                </div>
+                
+                <!-- Champ caché pour le formulaire -->
+                <input type="hidden" id="profs-hidden" name="profs" value="">
+            </div>
+        </div>
+
+        <!-- Section Assistants/Coordinateurs (Rôle ID 2) -->
+        <div class="form-section">
+            <div class="section-header">
+                <h2>Assistant(s)/Coordinateur(s) du cours</h2>
+                <p class="section-description">Gérez les assistants/coordinateurs assignés au cours (Rôle ID 2)</p>
+            </div>
+            
+            {% if is_edit %}
+                <div id="current-assistants" class="current-teachers">
+                    <h4>Assistants/Coordinateurs actuels :</h4>
+                    <div id="current-assistants-list" class="teachers-list">
+                        <em>Chargement...</em>
+                    </div>
+                </div>
+            {% endif %}
+            
+            <div class="form-field">
+                <label for="assistant-dropdown">Ajouter des assistants/coordinateurs</label>
+                <div class="dropdown-container">
+                    <div class="dropdown-header" id="assistant-dropdown" onclick="toggleAssistantDropdown()">
+                        <span id="assistant-dropdown-text">Sélectionner des assistants/coordinateurs...</span>
+                        <span class="dropdown-arrow">▼</span>
+                    </div>
+                    <div class="dropdown-content" id="assistant-dropdown-content">
+                        <div class="dropdown-search">
+                            <input type="text" id="assistant-search" placeholder="Rechercher un assistant/coordinateur..." onkeyup="filterAssistants()">
+                        </div>
+                        <div class="dropdown-options" id="assistant-options">
+                            {% for prof in profs %}
+                                <div class="dropdown-option" data-username="{{ prof.username }}" onclick="toggleAssistantSelection('{{ prof.username }}', '{{ prof.name }}')">
+                                    <input type="checkbox" id="assistant-{{ prof.username }}" value="{{ prof.username }}">
+                                    <label for="assistant-{{ prof.username }}">{{ prof.name }} ({{ prof.username }})</label>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="selected-assistants" class="selected-profs">
+                    <h5>Assistants/Coordinateurs sélectionnés :</h5>
+                    <div id="selected-assistants-list"></div>
+                </div>
+                
+                <!-- Champ caché pour le formulaire -->
+                <input type="hidden" id="assistants-hidden" name="assistants" value="">
+            </div>
+        </div>
+
+        <!-- Section Sections -->
+        <div class="form-section">
+            <div class="section-header">
+                <h2>Structure du cours</h2>
+                <p class="section-description">Créez les sections de votre cours et ajoutez des ressources</p>
+            </div>
+            <div class="sections-container">
+                <div id="sections-list" class="sections-list"></div>
+                <button type="button" id="add-section" class="add-section-btn">
+                    Ajouter une section
+                </button>
+            </div>
+        </div>
+
+        <!-- Boutons d'action -->
+        <div class="form-actions">
+            <button type="button" class="btn-secondary" onclick="history.back()">
+                Annuler
+            </button>
+            <button type="submit" class="btn-primary">
+                {% if is_edit %}Modifier le cours{% else %}Créer le cours{% endif %}
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- Modal pour sélection de fichiers -->
+<div id="nc-modal" class="modal-overlay">
+    <div class="modal-container">
+        <div class="modal-header">
+            <h3>📁 Choisir un fichier</h3>
+            <button class="modal-close" id="nc-close">×</button>
+        </div>
+        <div class="modal-body">
+            <div id="nc-current-path" class="current-path-title" style="font-weight:600;font-size:1.1rem;margin-bottom:0.5rem;"></div>
+            <div class="file-browser">
+                <ul id="nc-list" class="file-list"></ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if is_edit and course %}
+<div id="course-data" 
+     data-id="{{ course.id }}" 
+     data-categoryid="{{ course.categoryid|default:0 }}" 
+     data-fullname="{{ course.fullname }}" 
+     data-shortname="{{ course.shortname|default:"" }}" 
+     style="display: none;"></div>
+
+{% if preselection_data %}
+<div id="preselection-data" style="display: none;">{{ preselection_data|safe }}</div>
+{% endif %}
+
+{% if course.sections %}
+<div id="course-sections-data" style="display: none;">
+    {% for section in course.sections %}
+    <div class="section-data" 
+         data-id="{{ section.id|default:"" }}"
+         data-name="{{ section.name|default:"" }}"
+         data-summary="{{ section.summary|default:"" }}">
+        {% if section.modules %}
+        <div class="section-modules">
+            {% for module in section.modules %}
+            <div class="module-data"
+                 data-id="{{ module.id|default:"" }}"
+                 data-name="{{ module.name|default:"" }}"
+                 data-modname="{{ module.modname|default:"" }}"
+                 data-url="{{ module.url|default:"" }}"
+                 data-description="{{ module.description|default:"" }}"></div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<script>
+    window.isEdit = true;
+    // Les données seront lues depuis l'élément #course-data dans le JavaScript
+</script>
+{% else %}
+<script>
+    window.isEdit = false;
+</script>
+{% endif %}
+
+<script src="{% static 'caplogy_app/js/create_course.js' %}"></script>
+<script>
+// Détection du thème sombre
+function initTheme() {
+    const darkModeQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const applyTheme = (e) => {
+        if (e.matches) {
+            document.body.classList.add('dark-theme');
+        } else {
+            document.body.classList.remove('dark-theme');
+        }
+    };
+    
+    applyTheme(darkModeQuery);
+    darkModeQuery.addEventListener('change', applyTheme);
+}
+
+// Gestion du menu déroulant des professeurs
+let selectedProfs = new Set();
+
+// Fonction pour basculer l'affichage du menu déroulant
+function toggleProfDropdown() {
+    const dropdown = document.getElementById('prof-dropdown');
+    const content = document.getElementById('prof-dropdown-content');
+    
+    dropdown.classList.toggle('active');
+    content.classList.toggle('show');
+    
+    // Fermer le menu si on clique ailleurs
+    if (content.classList.contains('show')) {
+        document.addEventListener('click', closeProfDropdownOnClickOutside);
+    } else {
+        document.removeEventListener('click', closeProfDropdownOnClickOutside);
+    }
+}
+
+// Fonction pour fermer le menu déroulant si on clique à l'extérieur
+function closeProfDropdownOnClickOutside(event) {
+    const container = document.querySelector('.dropdown-container');
+    if (!container.contains(event.target)) {
+        const dropdown = document.getElementById('prof-dropdown');
+        const content = document.getElementById('prof-dropdown-content');
+        dropdown.classList.remove('active');
+        content.classList.remove('show');
+        document.removeEventListener('click', closeProfDropdownOnClickOutside);
+    }
+}
+
+// Fonction pour filtrer les professeurs
+function filterProfs() {
+    const filter = document.getElementById('prof-search').value.toLowerCase();
+    const options = document.querySelectorAll('.dropdown-option');
+    
+    options.forEach(option => {
+        const text = option.textContent.toLowerCase();
+        option.style.display = text.includes(filter) ? 'flex' : 'none';
+    });
+}
+
+// Fonction pour sélectionner/désélectionner un professeur
+function toggleProfSelection(username, profName) {
+    const checkbox = document.getElementById(`prof-${username}`);
+    const option = document.querySelector(`[data-username="${username}"]`);
+    
+    // Basculer l'état de la checkbox
+    checkbox.checked = !checkbox.checked;
+    
+    if (checkbox.checked) {
+        selectedProfs.add(username);
+        option.classList.add('selected');
+        addSelectedProfTag(username, profName);
+    } else {
+        selectedProfs.delete(username);
+        option.classList.remove('selected');
+        removeSelectedProfTag(username);
+    }
+    
+    updateProfDropdownText();
+    updateHiddenField();
+}
+
+// Fonction pour ajouter un tag de professeur sélectionné
+function addSelectedProfTag(username, profName) {
+    const selectedProfsList = document.getElementById('selected-profs-list');
+    
+    const tag = document.createElement('span');
+    tag.className = 'selected-prof-tag';
+    tag.dataset.username = username;
+    tag.innerHTML = `
+        ${profName}
+        <button type="button" class="selected-prof-remove" onclick="removeSelectedProf('${username}')">×</button>
+    `;
+    selectedProfsList.appendChild(tag);
+}
+
+// Fonction pour supprimer un tag de professeur sélectionné
+function removeSelectedProfTag(username) {
+    const tag = document.querySelector(`#selected-profs-list [data-username="${username}"]`);
+    if (tag) {
+        tag.remove();
+    }
+}
+
+// Fonction pour mettre à jour le texte du menu déroulant
+function updateProfDropdownText() {
+    const dropdownText = document.getElementById('prof-dropdown-text');
+    const count = selectedProfs.size;
+    
+    if (count === 0) {
+        dropdownText.textContent = 'Sélectionner des professeurs...';
+    } else if (count === 1) {
+        dropdownText.textContent = '1 professeur sélectionné';
+    } else {
+        dropdownText.textContent = `${count} professeurs sélectionnés`;
+    }
+}
+
+// Fonction pour mettre à jour le champ caché
+function updateHiddenField() {
+    const profsHidden = document.getElementById('profs-hidden');
+    profsHidden.value = Array.from(selectedProfs).join(',');
+}
+
+// Fonction globale pour supprimer un professeur sélectionné
+window.removeSelectedProf = function(username) {
+    selectedProfs.delete(username);
+    removeSelectedProfTag(username);
+    
+    // Décocher la checkbox correspondante
+    const checkbox = document.getElementById(`prof-${username}`);
+    const option = document.querySelector(`[data-username="${username}"]`);
+    if (checkbox) checkbox.checked = false;
+    if (option) option.classList.remove('selected');
+    
+    updateProfDropdownText();
+    updateHiddenField();
+};
+
+function initProfSelector() {
+    // Pas besoin d'initialisation spéciale, tout est géré par les fonctions onclick
+    updateProfDropdownText();
+}
+
+// Gestion des professeurs actuels en mode édition
+function initCurrentTeachers() {
+    if (!window.isEdit) return;
+    
+    const courseData = document.getElementById('course-data');
+    if (!courseData) return;
+    
+    const courseId = courseData.dataset.id;
+    const currentTeachersList = document.getElementById('current-teachers-list');
+    
+    // Récupérer les professeurs actuels
+    fetch(`/api/course/${courseId}/teachers/`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.teachers && data.teachers.length > 0) {
+                currentTeachersList.innerHTML = '';
+                data.teachers.forEach(teacher => {
+                    const tag = document.createElement('span');
+                    tag.className = 'teacher-tag';
+                    tag.innerHTML = `
+                        ${teacher.firstname} ${teacher.lastname} (${teacher.username})
+                        <button type="button" class="teacher-remove" onclick="removeCurrentTeacher(${teacher.id}, '${teacher.username}')">×</button>
+                    `;
+                    currentTeachersList.appendChild(tag);
+                });
+            } else {
+                currentTeachersList.innerHTML = '<em style="color:#999;">Aucun professeur assigné</em>';
+            }
+        })
+        .catch(error => {
+            console.error('Erreur lors de la récupération des professeurs:', error);
+            currentTeachersList.innerHTML = '<em style="color:#d32f2f;">Erreur lors du chargement</em>';
+        });
+}
+
+// Fonction pour supprimer un professeur actuel
+window.removeCurrentTeacher = function(teacherId, username) {
+    if (!confirm(`Êtes-vous sûr de vouloir supprimer ce professeur ?`)) {
+        return;
+    }
+    
+    const courseData = document.getElementById('course-data');
+    const courseId = courseData.dataset.id;
+    
+    fetch(`/api/course/${courseId}/teachers/remove/`, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        },
+        body: JSON.stringify({
+            teacher_id: teacherId
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Recharger la liste des professeurs actuels
+            initCurrentTeachers();
+            alert('Professeur supprimé avec succès');
+        } else {
+            alert('Erreur lors de la suppression: ' + data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Erreur:', error);
+        alert('Erreur lors de la suppression du professeur');
+    });
+};
+
+// ======= GESTION DES ASSISTANTS/COORDINATEURS (RÔLE ID 2) =======
+
+// Gestion du menu déroulant des assistants
+let selectedAssistants = new Set();
+
+// Fonction pour basculer l'affichage du menu déroulant
+function toggleAssistantDropdown() {
+    const dropdown = document.getElementById('assistant-dropdown');
+    const content = document.getElementById('assistant-dropdown-content');
+    
+    dropdown.classList.toggle('active');
+    content.classList.toggle('show');
+    
+    // Fermer le menu si on clique ailleurs
+    if (content.classList.contains('show')) {
+        document.addEventListener('click', closeAssistantDropdownOnClickOutside);
+    } else {
+        document.removeEventListener('click', closeAssistantDropdownOnClickOutside);
+    }
+}
+
+// Fonction pour fermer le menu déroulant si on clique à l'extérieur
+function closeAssistantDropdownOnClickOutside(event) {
+    const container = event.target.closest('.dropdown-container');
+    if (!container || !container.querySelector('#assistant-dropdown-content')) {
+        const dropdown = document.getElementById('assistant-dropdown');
+        const content = document.getElementById('assistant-dropdown-content');
+        if (dropdown && content) {
+            dropdown.classList.remove('active');
+            content.classList.remove('show');
+            document.removeEventListener('click', closeAssistantDropdownOnClickOutside);
+        }
+    }
+}
+
+// Fonction pour filtrer les assistants
+function filterAssistants() {
+    const filter = document.getElementById('assistant-search').value.toLowerCase();
+    const options = document.querySelectorAll('#assistant-options .dropdown-option');
+    
+    options.forEach(option => {
+        const text = option.textContent.toLowerCase();
+        option.style.display = text.includes(filter) ? 'flex' : 'none';
+    });
+}
+
+// Fonction pour sélectionner/désélectionner un assistant
+function toggleAssistantSelection(username, profName) {
+    const checkbox = document.getElementById(`assistant-${username}`);
+    const option = document.querySelector(`#assistant-options [data-username="${username}"]`);
+    
+    // Basculer l'état de la checkbox
+    checkbox.checked = !checkbox.checked;
+    
+    if (checkbox.checked) {
+        selectedAssistants.add(username);
+        option.classList.add('selected');
+        addSelectedAssistantTag(username, profName);
+    } else {
+        selectedAssistants.delete(username);
+        option.classList.remove('selected');
+        removeSelectedAssistantTag(username);
+    }
+    
+    updateAssistantDropdownText();
+    updateAssistantHiddenField();
+}
+
+// Fonction pour ajouter un tag d'assistant sélectionné
+function addSelectedAssistantTag(username, profName) {
+    const selectedAssistantsList = document.getElementById('selected-assistants-list');
+    
+    const tag = document.createElement('span');
+    tag.className = 'selected-prof-tag';
+    tag.dataset.username = username;
+    tag.innerHTML = `
+        ${profName}
+        <button type="button" class="selected-prof-remove" onclick="removeSelectedAssistant('${username}')">×</button>
+    `;
+    selectedAssistantsList.appendChild(tag);
+}
+
+// Fonction pour supprimer un tag d'assistant sélectionné
+function removeSelectedAssistantTag(username) {
+    const tag = document.querySelector(`#selected-assistants-list [data-username="${username}"]`);
+    if (tag) {
+        tag.remove();
+    }
+}
+
+// Fonction pour mettre à jour le texte du menu déroulant
+function updateAssistantDropdownText() {
+    const dropdownText = document.getElementById('assistant-dropdown-text');
+    const count = selectedAssistants.size;
+    
+    if (count === 0) {
+        dropdownText.textContent = 'Sélectionner des assistants/coordinateurs...';
+    } else if (count === 1) {
+        dropdownText.textContent = '1 assistant/coordinateur sélectionné';
+    } else {
+        dropdownText.textContent = `${count} assistants/coordinateurs sélectionnés`;
+    }
+}
+
+// Fonction pour mettre à jour le champ caché
+function updateAssistantHiddenField() {
+    const assistantsHidden = document.getElementById('assistants-hidden');
+    assistantsHidden.value = Array.from(selectedAssistants).join(',');
+}
+
+// Fonction globale pour supprimer un assistant sélectionné
+window.removeSelectedAssistant = function(username) {
+    selectedAssistants.delete(username);
+    removeSelectedAssistantTag(username);
+    
+    // Décocher la checkbox correspondante
+    const checkbox = document.getElementById(`assistant-${username}`);
+    const option = document.querySelector(`#assistant-options [data-username="${username}"]`);
+    if (checkbox) checkbox.checked = false;
+    if (option) option.classList.remove('selected');
+    
+    updateAssistantDropdownText();
+    updateAssistantHiddenField();
+};
+
+function initAssistantSelector() {
+    // Pas besoin d'initialisation spéciale, tout est géré par les fonctions onclick
+    updateAssistantDropdownText();
+}
+
+// Gestion des assistants actuels en mode édition
+function initCurrentAssistants() {
+    if (!window.isEdit) return;
+    
+    const courseData = document.getElementById('course-data');
+    if (!courseData) return;
+    
+    const courseId = courseData.dataset.id;
+    const currentAssistantsList = document.getElementById('current-assistants-list');
+    
+    // Récupérer les assistants actuels avec role_id=2
+    fetch(`/api/course/${courseId}/teachers/?role_id=2`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.teachers && data.teachers.length > 0) {
+                currentAssistantsList.innerHTML = '';
+                data.teachers.forEach(teacher => {
+                    const teacherElement = document.createElement('div');
+                    teacherElement.className = 'current-teacher';
+                    teacherElement.innerHTML = `
+                        <span class="teacher-name">${teacher.fullname} (${teacher.username})</span>
+                        <button type="button" class="remove-teacher-btn" onclick="removeCurrentAssistant(${teacher.id}, '${teacher.fullname}')">
+                            Retirer
+                        </button>
+                    `;
+                    currentAssistantsList.appendChild(teacherElement);
+                });
+            } else {
+                currentAssistantsList.innerHTML = '<em>Aucun assistant/coordinateur assigné</em>';
+            }
+        })
+        .catch(error => {
+            console.error('Erreur lors du chargement des assistants:', error);
+            currentAssistantsList.innerHTML = '<em>Erreur lors du chargement</em>';
+        });
+}
+
+// Fonction pour retirer un assistant actuel
+window.removeCurrentAssistant = function(teacherId, teacherName) {
+    if (!confirm(`Êtes-vous sûr de vouloir retirer ${teacherName} des assistants/coordinateurs de ce cours ?`)) {
+        return;
+    }
+    
+    const courseData = document.getElementById('course-data');
+    const courseId = courseData.dataset.id;
+    
+    fetch(`/api/course/${courseId}/remove_teacher/`, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify({
+            teacher_id: teacherId
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Recharger la liste des assistants actuels
+            initCurrentAssistants();
+        } else {
+            alert('Erreur: ' + data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Erreur:', error);
+        alert('Erreur lors de la suppression de l\'assistant/coordinateur');
+    });
+};
+
+// Modifier le gestionnaire de soumission du formulaire
+document.addEventListener('DOMContentLoaded', function() {
+    initTheme();
+    initProfSelector();
+    initCurrentTeachers();
+    initAssistantSelector();
+    initCurrentAssistants();
+    
+    // Rendre les fonctions globales accessibles
+    window.toggleProfDropdown = toggleProfDropdown;
+    window.filterProfs = filterProfs;
+    window.toggleProfSelection = toggleProfSelection;
+    window.toggleAssistantDropdown = toggleAssistantDropdown;
+    window.filterAssistants = filterAssistants;
+    window.toggleAssistantSelection = toggleAssistantSelection;
+    
+    // Modifier la soumission du formulaire pour traiter les professeurs et assistants
+    const form = document.getElementById('course-form');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            // Mettre à jour les champs cachés avant soumission
+            updateHiddenField();
+            updateAssistantHiddenField();
+        });
+    }
+});
+</script>
+{% endblock %}

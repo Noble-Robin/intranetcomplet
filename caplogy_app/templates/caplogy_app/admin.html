@@ -1,0 +1,50 @@
+{% extends 'caplogy_app/base.html' %}
+{% block title %}Administration{% endblock %}
+{% block content %}
+<div class="login-container">
+  <h2 class="login-title">Administration</h2>
+
+  {% if messages %}
+    <ul class="messages">
+      {% for message in messages %}
+        <li class="{{ message.tags }}">{{ message }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+
+  <h3>Utilisateurs LDAP/AD</h3>
+  <table class="user-list">
+    <thead>
+      <tr>
+        <th>Nom d'utilisateur</th>
+        <th>Rôle</th>
+        <th>Changer le rôle</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for u in users %}
+      <tr>
+        <td>{{ u.username }}</td>
+        <td>{{ u.role }}</td>
+        <td>
+          {% if u.id %}
+          <form method="post" style="display:inline;">
+            {% csrf_token %}
+            <input type="hidden" name="user_id" value="{{ u.id }}">
+            <select name="new_role">
+              <option value="none" {% if u.role == 'none' %}selected{% endif %}>Aucun accès</option>
+              <option value="user" {% if u.role == 'user' %}selected{% endif %}>Utilisateur</option>
+              <option value="admin" {% if u.role == 'admin' %}selected{% endif %}>Administrateur</option>
+            </select>
+            <button type="submit" name="change_role" class="btn btn-sm">Valider</button>
+          </form>
+          {% else %}
+          <span class="text-muted">Non synchronisé</span>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
