@@ -1,0 +1,10 @@
+# Requirements pour tous les projets Django
+django>=4.2,<5.0
+gunicorn>=21.2.0
+xhtml2pdf>=0.2.8
+requests>=2.31.0
+python-dotenv>=1.0.0
+ldap3>=2.9.1
+pillow>=10.0.0
+urllib3>=2.0.0
+whitenoise>=6.5.0
