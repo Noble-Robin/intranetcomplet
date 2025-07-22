@@ -39,7 +39,6 @@
           {% for group in request.user.groups.all %}
             {% if group.name == 'admin' %}
               <a href="{% url 'admin_page' %}" class="nav-link">Admin</a>
-              {% break %}
             {% endif %}
           {% endfor %}
         {% endif %}
