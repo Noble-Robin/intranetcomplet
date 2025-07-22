@@ -2,8 +2,10 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 
-# Charger les variables d'environnement depuis .env
-load_dotenv()
+# Charger les variables d'environnement depuis le .env principal (moodle/.env)
+from pathlib import Path as _Path
+_env_path = _Path(__file__).resolve().parent / '.env'
+load_dotenv(_env_path)
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
