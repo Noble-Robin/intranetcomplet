@@ -187,7 +187,7 @@ def index(request):
         noms_airtable_filtered = set()
         
         # print("Prenoms SQLite:", prenoms_sqlite)
-        print("Prenoms Airtable:", prenoms_airtable)
+        # print("Prenoms Airtable:", prenoms_airtable)  # Trop verbeux
 
         if select_prenom and not noms_sqlite:
             url = f"https://api.airtable.com/v0/{AIRTABLE_BASE_ID}/{AIRTABLE_TABLE_ID}"
@@ -217,12 +217,12 @@ def index(request):
 
                     if nom_val:
                         noms_airtable_filtered.add(nom_val.strip())
-                print("Nom récupéré dans Airtable:", nom_val)
+                # print("Nom récupéré dans Airtable:", nom_val)  # Trop verbeux
                 offset = data.get("offset")
                 if not offset:
                     break
         
-        print("Tous les noms filtrés Airtable:", noms_airtable_filtered)
+        # print("Tous les noms filtrés Airtable:", noms_airtable_filtered)  # Trop verbeux
 
 
         # Fusion
@@ -246,7 +246,10 @@ def index(request):
             
             # Recherche utilisateur Airtable
             airtable_data = airtable(select_prenom, select_nom)
-            # print(f"[DEBUG] Airtable data pour {select_prenom} {select_nom} :", airtable_data)
+            # DEBUG: Affichage lisible du record Airtable complet pour debug photo
+            if airtable_data:
+                import json
+                print("\n===== [Airtable Record pour debug photo] =====\n" + json.dumps(airtable_data, indent=2, ensure_ascii=False) + "\n==============================================\n")
             if airtable_data:
                 airtable_to_context_mapping = {
                     "sexe": "civilite",
