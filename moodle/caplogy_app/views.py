@@ -31,6 +31,13 @@ def login_view(request):
             return render(request, 'caplogy_app/login.html')
         # Connexion au milieu de session Django
         dj_login(request, django_user, backend='django.contrib.auth.backends.ModelBackend')
+        # Gestion du paramètre 'next' pour rediriger correctement après login
+        next_url = request.GET.get('next') or request.POST.get('next')
+        if next_url:
+            return redirect(next_url)
+        return redirect('home')
+    # Si déjà authentifié, aller directement à la home page
+    if request.user.is_authenticated:
         return redirect('home')
     return render(request, 'caplogy_app/login.html')
 
