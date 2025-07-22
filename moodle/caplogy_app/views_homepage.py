@@ -1,6 +1,6 @@
 from django.shortcuts import render
 
-from ..AutoDocs.utils_group_required import group_required
+from AutoDocs.utils_group_required import group_required
 
 @login_required
 @group_required('admin', 'moodle')
