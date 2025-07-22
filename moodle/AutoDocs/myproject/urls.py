@@ -25,7 +25,6 @@ urlpatterns = [
 ]
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
     path('', views.index, name='index'),
     path('', views.index, name='generer_contrat_cdi'),
     path('creer_employer/', views.creer_employer, name='creer_employer'),
