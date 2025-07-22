@@ -12,7 +12,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from .services.user_service import UserService
 from .services.moodle_api import MoodleAPI
 from .services.nextcloud_api import NextcloudAPI
-from ..AutoDocs.utils_group_required import group_required
+from AutoDocs.utils_group_required import group_required
 
 us = UserService()
 
