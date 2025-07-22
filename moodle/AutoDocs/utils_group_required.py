@@ -13,4 +13,8 @@ def group_required(*group_names):
             if bool(u.groups.filter(name__in=group_names)):
                 return True
         raise PermissionDenied
+<<<<<<< HEAD
     return user_passes_test(in_groups)
+=======
+    return user_passes_test(in_groups)
+>>>>>>> 3ad199c281336707a407058fbea28b11bfd12acb

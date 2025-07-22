@@ -19,9 +19,15 @@ import unicodedata
 # Charge les variables d'environnement depuis .env
 load_dotenv(os.path.join(settings.BASE_DIR, ".env"))
 
+#Users
 AIRTABLE_API_KEY = os.environ.get("AIRTABLE_API_KEY")
 AIRTABLE_BASE_ID = os.environ.get("AIRTABLE_BASE_ID")
 AIRTABLE_TABLE_ID = os.environ.get("AIRTABLE_TABLE_ID")
+
+#Entreprises
+AIRTABLE_ENTREPRISE_API_KEY = os.environ.get("AIRTABLE_ENTREPRISE_API_KEY")
+AIRTABLE_ENTREPRISE_BASE_ID = os.environ.get("AIRTABLE_ENTREPRISE_BASE_ID")
+AIRTABLE_ENTREPRISE_TABLE_ID = os.environ.get("AIRTABLE_ENTREPRISE_TABLE_ID")
 
 # Chemin vers ta base SQLite
 db_path = os.path.join(settings.BASE_DIR, "Data", "Caplogy.db")
@@ -109,9 +115,6 @@ def airtable_all_names():
     return prenoms, noms
 
 def airtable_entreprise(nom_entreprise):
-    AIRTABLE_ENTREPRISE_API_KEY = "patRPkOrCjXiNQOXP.da78f4d42d6a81c684a447eaa4d285a5357552412041ef96dab6332a659c662d"
-    AIRTABLE_ENTREPRISE_BASE_ID = "appLM1DpaOp09sL9Z"
-    AIRTABLE_ENTREPRISE_TABLE_ID = "tblceZYcqVFJOlmDQ"
 
     url = f"https://api.airtable.com/v0/{AIRTABLE_ENTREPRISE_BASE_ID}/{AIRTABLE_ENTREPRISE_TABLE_ID}"
     headers = {
@@ -134,9 +137,9 @@ def airtable_entreprise(nom_entreprise):
 
 
 from ..utils_group_required import group_required
-
 @login_required
 @group_required('admin', 'rh')
+
 def index(request):
     context = None
     type_doc = None
@@ -190,7 +193,7 @@ def index(request):
         noms_airtable_filtered = set()
         
         # print("Prenoms SQLite:", prenoms_sqlite)
-        # print("Prenoms Airtable:", prenoms_airtable)  # Trop verbeux
+        print("Prenoms Airtable:", prenoms_airtable)
 
         if select_prenom and not noms_sqlite:
             url = f"https://api.airtable.com/v0/{AIRTABLE_BASE_ID}/{AIRTABLE_TABLE_ID}"
@@ -220,12 +223,12 @@ def index(request):
 
                     if nom_val:
                         noms_airtable_filtered.add(nom_val.strip())
-                # print("Nom récupéré dans Airtable:", nom_val)  # Trop verbeux
+                print("Nom récupéré dans Airtable:", nom_val)
                 offset = data.get("offset")
                 if not offset:
                     break
         
-        # print("Tous les noms filtrés Airtable:", noms_airtable_filtered)  # Trop verbeux
+        print("Tous les noms filtrés Airtable:", noms_airtable_filtered)
 
 
         # Fusion
@@ -249,10 +252,7 @@ def index(request):
             
             # Recherche utilisateur Airtable
             airtable_data = airtable(select_prenom, select_nom)
-            # DEBUG: Affichage lisible du record Airtable complet pour debug photo
-            if airtable_data:
-                import json
-                print("\n===== [Airtable Record pour debug photo] =====\n" + json.dumps(airtable_data, indent=2, ensure_ascii=False) + "\n==============================================\n")
+            # print(f"[DEBUG] Airtable data pour {select_prenom} {select_nom} :", airtable_data)
             if airtable_data:
                 airtable_to_context_mapping = {
                     "sexe": "civilite",
@@ -267,8 +267,8 @@ def index(request):
                     "date_de_naissance": "date_de_naissance",
                     "cachet": "cachet",
                     "logo": "logo",
+                    "photo": "photo",
                 }
-
                 for key, value in airtable_data.items():
                     key_normalized = normalize_key(key)
                     mapped_key = airtable_to_context_mapping.get(key_normalized, key_normalized)
@@ -280,24 +280,19 @@ def index(request):
                             user_data[mapped_key] = "Monsieur"
                         else:
                             user_data[mapped_key] = value
+                    elif mapped_key == "photo":
+                        # Airtable renvoie une liste d'objets pour les fichiers, il faut prendre le champ 'url' du premier élément
+                        if isinstance(value, list) and value and isinstance(value[0], dict) and "url" in value[0]:
+                            user_data[mapped_key] = value[0]["url"]
+                        elif isinstance(value, str):
+                            user_data[mapped_key] = value
+                        else:
+                            user_data[mapped_key] = ""
                     else:
                         user_data[mapped_key] = value
-                # print("[DEBUG] Airtable utilisé pour pré-remplir :", user_data)
-
-                # Correction : extraire l'URL de la photo (clé "Photo" majuscule d'abord, toujours depuis airtable_data)
-                photo_field = None
-                if "Photo" in airtable_data:
-                    photo_field = airtable_data["Photo"]
-                elif "photo" in airtable_data:
-                    photo_field = airtable_data["photo"]
-                if isinstance(photo_field, list) and photo_field and isinstance(photo_field[0], dict):
-                    user_data["photo"] = photo_field[0].get("url", "")
-                elif isinstance(photo_field, str):
-                    user_data["photo"] = photo_field
-                else:
-                    user_data["photo"] = ""
-
-                            
+                print("URL photo utilisée pour l'affichage :", user_data.get("photo"))
+                # Pour affichage dans le template, la variable context["photo"] doit contenir cette URL
+                context["photo"] = user_data.get("photo")
             if not user_data:
                 conn.close()
                 return render(request, "index.html", {
@@ -388,6 +383,7 @@ def index(request):
             # Préparation contexte template
             context = {
                 # User
+                "photo": user_data.get("photo", ""),
                 "prenom": user_data.get("prenom", ""),
                 "nom": user_data.get("nom", ""),
                 "civilite": user_data.get("civilite", ""),
@@ -395,19 +391,19 @@ def index(request):
                 "lieu_de_naissance": user_data.get("lieu_de_naissance", ""),
                 "nationalite": user_data.get("nationalite", ""),
                 "adresse_maison": user_data.get("adresse_maison", ""),
-                "num_secu": user_data.get("num_secu", ""),
-                "titre_sejour": user_data.get("titre_sejour", ""),
-                "num_sejour": user_data.get("num_sejour", ""),
-                "date_valable_sejour": user_data.get("date_valable_sejour", ""),
+                "num_secu": user_data.get("numero_de_securite_sociale", ""),
+                "titre_sejour": user_data.get("titre_de_sejour", ""),
+                "num_sejour": user_data.get("numero_du_titre_de_sejour", ""),
+                "date_valable_sejour": user_data.get("date_de_validite_du_titre_de_sejour", ""),
                 "poste": user_data.get("poste", ""),
                 "date_poste": user_data.get("date_poste", ""),
                 "position": user_data.get("position", ""),
                 "coefficient": user_data.get("coefficient", ""),
                 "salaire_net": user_data.get("salaire_net", ""),
                 "salaire_brut": user_data.get("salaire_brut", ""),
-                "salaire_brut_mois": user_data.get("salaire_brut_mois", ""),
+                "salaire_brut_mois": user_data.get("salaire_brute_mensuel", ""),
                 "lieu_de_travail": user_data.get("lieu_de_travail", ""),
-                "limit_geo_region": user_data.get("limit_geo_region", ""),
+                "limit_geo_region": user_data.get("limite_geographique_de_la_region", ""),
 
                 # Entreprise
                 "entreprise_nom": entreprise_data.get("entreprise_nom", "") or user_data.get("entreprise_nom", ""),
@@ -431,18 +427,8 @@ def index(request):
 
 
                 # logo
-
-                # Sécurisation : ne jamais passer une liste à download_image_to_static
-                "logo": download_image_to_static(
-                    (entreprise_data.get("logo", "") if isinstance(entreprise_data.get("logo", ""), str) else "")
-                    or (user_data.get("logo", "") if isinstance(user_data.get("logo", ""), str) else ""),
-                    logo_path
-                ),
-                "cachet": download_image_to_static(
-                    (entreprise_data.get("cachet", "") if isinstance(entreprise_data.get("cachet", ""), str) else "")
-                    or (user_data.get("cachet", "") if isinstance(user_data.get("cachet", ""), str) else ""),
-                    cachet_path
-                ),
+                "logo": download_image_to_static(entreprise_data.get("logo", "") or user_data.get("logo", ""), logo_path),
+                "cachet": download_image_to_static(entreprise_data.get("cachet", "") or user_data.get("cachet", ""), cachet_path),
 
                 # date
                 "date_document": date.today().strftime("%d/%m/%Y"),
@@ -492,9 +478,9 @@ def index(request):
     })
 
 from ..utils_group_required import group_required
-
 @login_required
 @group_required('admin', 'rh')
+
 def creer_employer(request):
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
@@ -532,7 +518,6 @@ def creer_employer(request):
         "today": localdate().isoformat(),
         "entreprises": entreprises,
     })
-
 
 @login_required
 @group_required('admin', 'rh')
@@ -592,6 +577,7 @@ def generer_contrat_cdi(request):
     departement = request.POST.get("departement", "")
     type_contrat = request.POST.get("type_contrat", "")
     specialite = request.POST.get("specialite", "")
+    responsable_hierarchique = request.POST.get("responsable_hierarchique", "")
     nom_complet = f"{prenom} {nom}"
 
     if date_de_naissance:
@@ -761,6 +747,7 @@ def generer_contrat_cdi(request):
             "Salaire brute mensuel": salaire_brut_mois,
             "Salaire net": salaire_net,
             "Spécialité": specialite,
+            "Responsable hiérarchique": responsable_hierarchique,
         }
     }
     fields = airtable_payload["fields"]
@@ -863,7 +850,7 @@ def modifier_employer(request):
         "Titre de séjour": "titre_sejour",
         "Numéro du titre de séjour": "num_sejour",
         "Date de validité": "date_valable_sejour",
-        "Poste": "poste",
+        "Intitulé du poste": "poste",
         "Date d'entrée": "date_poste",
         "Position": "position",
         "Coefficient": "coefficient",
@@ -881,7 +868,7 @@ def modifier_employer(request):
         "Etat": "etat",
         "Statut PE": "statut_pe",
         "Last seen date": "last_seen_date",
-        "Responsable hiéarchique": "responsable_hierarchique",
+        "Responsable hiérarchique": "responsable_hierarchique",
         "Départements": "departement",
         "Type de contrat": "type_contrat",
         "Date de sortie": "date_sortie",
@@ -897,7 +884,15 @@ def modifier_employer(request):
     airtable_data = {}
     for k, v in airtable_data_raw.items():
         mapped_key = airtable_to_form.get(k, None)
-        if mapped_key:
+        if mapped_key == "photo":
+            # Même logique que dans index : extraire l'URL si c'est une liste d'objets
+            if isinstance(v, list) and v and isinstance(v[0], dict) and "url" in v[0]:
+                airtable_data[mapped_key] = v[0]["url"]
+            elif isinstance(v, str):
+                airtable_data[mapped_key] = v
+            else:
+                airtable_data[mapped_key] = ""
+        elif mapped_key:
             airtable_data[mapped_key] = v
 
     merged_data = user_data.copy()
@@ -907,7 +902,7 @@ def modifier_employer(request):
     for key in [
         "prenom", "nom", "civilite", "date_de_naissance", "lieu_de_naissance", "nationalite",
         "adresse_maison", "num_secu", "titre_sejour", "num_sejour", "date_valable_sejour",
-        "poste", "date_poste", "position", "coefficient", "lieu_de_travail", "limit_geo_region",
+        "poste", "date_poste", "position", "coefficient", "lieu_de_travail", "limit_geo_region", "photo",
         "entreprise_nom", "email", "fonction", "salaire_brut", "salaire_brut_mois", "salaire_net",
         "mutation", "equipe_manageriale", "statut", "etat", "statut_pe", "last_seen_date", 
         "responsable_hierarchique", "departement", "type_contrat", "date_sortie", "matricule", "specialite"
@@ -950,7 +945,7 @@ def modifier_employer(request):
         cursor = conn.cursor()
         # Met à jour les champs principaux (adapter selon vos colonnes)
         cursor.execute("""
-            UPDATE user SET prenom=?, nom=?, civilite=?, date_de_naissance=?, lieu_de_naissance=?, nationalite=?, adresse_maison=?, num_secu=?, titre_sejour=?, num_sejour=?, date_valable_sejour=?, poste=?, date_poste=?, position=?, coefficient=?, lieu_de_travail=?, limit_geo_region=?, entreprise=?, email=?, fonction=?, salaire_brut=?, salaire_brut_mois=?, salaire_net=?, mutation=?, equipe_manageriale=?, statut=?, etat=?, statut_pe=?, last_seen_date=?, responsable_hierarchique=?, departement=?, type_contrat=?, date_sortie=?, matricule=?, specialite=?
+            UPDATE user SET prenom=?, nom=?, civilite=?, date_de_naissance=?, lieu_de_naissance=?, nationalite=?, adresse_maison=?, num_secu=?, titre_sejour=?, num_sejour=?, date_valable_sejour=?, poste=?, date_poste=?, position=?, coefficient=?, lieu_de_travail=?, limit_geo_region=?, entreprise=?, email=?, fonction=?, salaire_brut=?, salaire_brut_mois=?, salaire_net=?, mutation=?, equipe_manageriale=?, statut=?, etat=?, statut_pe=?, last_seen_date=?, responsable_hierarchique=?, departement=?, type_contrat=?, date_sortie=?, matricule=?
             WHERE LOWER(prenom)=LOWER(?) AND LOWER(nom)=LOWER(?)
         """, (
             form_data.get("prenom"), form_data.get("nom"), form_data.get("civilite"), date_naissance_iso,
@@ -966,7 +961,7 @@ def modifier_employer(request):
             form_data.get("responsable_hierarchique"),
             form_data.get("departement"), form_data.get("type_contrat"),
             form_data.get("salaire_net"), form_data.get("salaire_brut_mois"), form_data.get("limit_geo_region"),
-            form_data.get("matricule"), form_data.get("specialite"),
+            form_data.get("matricule"),
             prenom, nom
         ))
 
@@ -1005,7 +1000,7 @@ def modifier_employer(request):
             "Statut": form_data.get("statut"),
             "Statut PE": form_data.get("statut_pe"),
             "Last seen date": date_last_seen_date_iso,
-            "Responsable hiéarchique": form_data.get("responsable_hierarchique"),
+            "Responsable hiérarchique": form_data.get("responsable_hierarchique"),
             "Départements": form_data.get("departement"),
             "Etat": form_data.get("etat"),
             "Nationnalité": form_data.get("nationalite"),
@@ -1050,7 +1045,6 @@ def modifier_employer(request):
             except Exception as e:
                 print("[EXCEPTION Airtable]", str(e))
 
-
         # Rediriger vers la page d'accueil ou la preview
         return redirect('/')
 
@@ -1060,4 +1054,5 @@ def modifier_employer(request):
         "entreprises": entreprises,
         "year": localdate().year,
         "today": localdate().isoformat(),
+        "photo": merged_data.get("photo", ""),
     })

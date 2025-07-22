@@ -1,0 +1,88 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+    background: linear-gradient(120deg, #0a2540 0%, #3b82f6 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.caplogy-wrapper {
+    width: 100%;
+    padding: 40px;
+    box-sizing: border-box;
+}
+
+.caplogy-container {
+    background: white;
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 8px 32px rgba(10, 37, 64, 0.2);
+    max-width: 600px;
+    margin: auto;
+}
+
+h1 {
+    text-align: center;
+    color: #0a2540;
+    margin-bottom: 30px;
+}
+
+/* Étapes du formulaire */
+.form-step {
+    display: none;
+    flex-direction: column;
+    font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+}
+
+.form-step.active {
+    display: flex;
+}
+
+label {
+    margin-top: 14px;
+    font-weight: 600;
+    color: #0a2540;
+}
+
+input[type="text"],
+input[type="date"] {
+    width: 100%;
+    padding: 12px;
+    margin-top: 4px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    background: #f8fafc;
+}
+
+button {
+    padding: 12px;
+    margin-top: 24px;
+    border: none;
+    border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button.next,
+button.prev {
+    background-color: #3b82f6;
+    color: white;
+}
+
+button[type="submit"] {
+    background: linear-gradient(90deg, #0a2540 0%, #3b82f6 100%);
+    color: white;
+}
+
+select {
+    width: 100%;
+    padding: 12px;
+    margin-top: 4px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    background: #f8fafc;
+    box-sizing: border-box;
+}

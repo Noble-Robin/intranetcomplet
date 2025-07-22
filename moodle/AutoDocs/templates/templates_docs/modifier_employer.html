@@ -155,11 +155,13 @@
                     <input type="text" name="nom" value="{{ form_data.nom }}" required>
 
                     <label>Civilité :</label>
-                    <select name="civilite" required>
-                        <option value="">-- Sélectionner --</option>
-                        <option value="Monsieur" {% if form_data.civilite == "Monsieur" %}selected{% endif %}>Monsieur</option>
-                        <option value="Madame" {% if form_data.civilite == "Madame" %}selected{% endif %}>Madame</option>
-                    </select>
+                    <div style="display:flex;align-items:center;gap:10px;">
+                        <select name="civilite" required>
+                            <option value="">{{ form_data.civilite }}</option>
+                            <option value="Monsieur" {% if form_data.civilite == "Monsieur" %}selected{% endif %}>Homme</option>
+                            <option value="Madame" {% if form_data.civilite == "Madame" %}selected{% endif %}>Femme</option>
+                        </select>
+                    </div>
 
                     <label>Date de naissance :</label>
                     <input type="date" name="date_de_naissance" value="{{ form_data.date_de_naissance }}">
