@@ -3,4 +3,4 @@ from django.contrib.auth.decorators import login_required
 
 @login_required
 def home(request):
-    return render(request, 'homepage/home.html')
+    return render(request, 'homepage/home_new.html')

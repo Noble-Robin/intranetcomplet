@@ -1,0 +1,26 @@
+{% extends 'caplogy_app/base.html' %}
+{% load static %}
+
+{% block title %}Intranet Caplogy{% endblock %}
+
+{% block content %}
+  <div class="moodle-header">
+      <h1>Bienvenue sur l'Intranet Caplogy</h1>
+      <p>Choisissez une application&nbsp;:</p>
+  </div>
+  <div class="app-links">
+      <a class="app-card autodocs" href="/autodocs/">
+          <div class="icon">📄</div>
+          <div class="title">AutoDocs</div>
+          <div class="desc">Gestion documentaire</div>
+      </a>
+      <a class="app-card moodle" href="/moodle/">
+          <div class="icon">🎓</div>
+          <div class="title">Moodle</div>
+          <div class="desc">Plateforme pédagogique</div>
+      </a>
+  </div>
+  <footer class="moodle-footer">
+      <p>&copy; 2025 Caplogy - Intranet</p>
+  </footer>
+{% endblock %}
