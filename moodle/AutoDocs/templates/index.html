@@ -71,121 +71,146 @@
 
             <label for="prenom">Prénom :</label>
             <select id="prenom" name="prenom" required>
-                <option value="">-- Choisir un prénom --</option>
-                {% for prenom in prenoms %}
-                    <option value="{{ prenom }}" {% if prenom == select_prenom %}selected{% endif %}>{{ prenom }}</option>
-                {% endfor %}
-            </select>
+        <div class="form-preview-flex">
+            <div class="form-panel">
+                <form method="post" id="doc-form">
+                    {% csrf_token %}
+                    <label for="type_doc">Type de document :</label>
+                    <select id="type_doc" name="type_doc" required>
+                        <option value="attestation_de_remise_de_materiel" {% if type_doc == "attestation_de_remise_de_materiel" %}selected{% endif %}>
+                            Attestation de remise de matériel
+                        </option>
+                        <option value="attestation_employeur" {% if type_doc == "attestation_employeur" %}selected{% endif %}>
+                            Attestation employeur
+                        </option>
+                        <option value="contrat_cdi" {% if type_doc == "contrat_cdi" %}selected{% endif %}>
+                            Contrat CDI
+                        </option>
+                    </select>
 
-            <label for="nom">Nom :</label>
-            <select id="nom" name="nom" required>
-                <option value="">-- Choisir un nom --</option>
-                {% for nom in noms %}
-                    <option value="{{ nom }}" {% if nom == select_nom %}selected{% endif %}>{{ nom }}</option>
-                {% endfor %}
-            </select>
+                    <label for="prenom">Prénom :</label>
+                    <select id="prenom" name="prenom" required>
+                        <option value="">-- Choisir un prénom --</option>
+                        {% for prenom in prenoms %}
+                            <option value="{{ prenom }}" {% if prenom == select_prenom %}selected{% endif %}>{{ prenom }}</option>
+                        {% endfor %}
+                    </select>
 
-            <button type="button" id="creer-employe-btn">
-                Créer un(e) nouvel(le) employé(e)
-            </button>
-<script>
-    document.getElementById('creer-employe-btn').onclick = function() {
-        window.location.href = "{% url 'creer_employer' %}";
-    };
-</script>
+                    <label for="nom">Nom :</label>
+                    <select id="nom" name="nom" required>
+                        <option value="">-- Choisir un nom --</option>
+                        {% for nom in noms %}
+                            <option value="{{ nom }}" {% if nom == select_nom %}selected{% endif %}>{{ nom }}</option>
+                        {% endfor %}
+                    </select>
 
-            <input type="hidden" name="generate" value="0" />
-            <button type="submit" name="action" value="preview" id="preview-btn">Preview</button>
-        </form>
+                    <button type="button" onclick="window.location.href='{% url 'creer_employer' %}'">
+                        Créer un(e) nouvel(le) employé(e)
+                    </button>
 
-        <!-- Bouton Modifier-->
-        <form method="get" action="{% url 'modifier_employer' %}">
-            <input type="hidden" name="prenom" value="{{ select_prenom }}">
-            <input type="hidden" name="nom" value="{{ select_nom }}">
-            <button type="submit">Modifier</button>
-        </form>
+                    <input type="hidden" name="generate" value="0" />
+                    <button type="submit" name="action" value="preview" id="preview-btn">Preview</button>
+                </form>
 
-        {% if error_message %}
-            <p style="color: red; font-weight: bold;">{{ error_message }}</p>
-        {% endif %}
+                <!-- Bouton Modifier-->
+                <form method="get" action="{% url 'modifier_employer' %}">
+                    <input type="hidden" name="prenom" value="{{ select_prenom }}">
+                    <input type="hidden" name="nom" value="{{ select_nom }}">
+                    <button type="submit">Modifier</button>
+                </form>
 
-        <div class="preview-panel" style="display: flex; flex-direction: column; align-items: flex-start;">
-            <h2>Prévisualisation</h2>
-            {% if preview %}
-                <div style="margin-bottom:16px;">
-                    <img src="{{ preview.photo }}" alt="Photo" style="max-width:180px;max-height:180px;border-radius:8px;box-shadow:0 2px 8px #aaa;">
-                    <div style="font-size:12px;color:#888;word-break:break-all;">{{ photo }}</div>
-                </div>
-            {% endif %}
-            <div style="width:100%;">
-                {% if preview %}
-                    {% if type_doc == "contrat_cdi" %}
-                        <p><strong>Civilité :</strong> {{ preview.civilite }}</p>
-                        <p><strong>Nom :</strong> {{ preview.nom }}</p>
-                        <p><strong>Prénom :</strong> {{ preview.prenom }}</p>
-                        <p><strong>Date de naissance :</strong> {{ preview.date_de_naissance }}</p>
-                        <p><strong>Lieu de naissance :</strong> {{ preview.lieu_de_naissance }}</p>
-                        <p><strong>Nationalité :</strong> {{ preview.nationalite }}</p>
-                        <p><strong>Adresse :</strong> {{ preview.adresse_maison }}</p>
-                        <p><strong>Numéro de sécurité sociale :</strong> {{ preview.num_secu }}</p>
-                        <p><strong>Titre de séjour :</strong> {{ preview.titre_sejour }}</p>
-                        <p><strong>Numéro de séjour :</strong> {{ preview.num_sejour }}</p>
-                        <p><strong>Date de validité du séjour :</strong> {{ preview.date_valable_sejour }}</p>
-                        <p><strong>Poste :</strong> {{ preview.poste }}</p>
-                        <p><strong>Salaire net :</strong> {{ preview.salaire_net }}</p>
-                        <p><strong>Salaire brut annuel :</strong> {{ preview.salaire_brut }}</p>
-                        <p><strong>Salaire brut mensuel :</strong> {{ preview.salaire_brut_mois }}</p>
-                        <p><strong>Date du poste :</strong> {{ preview.date_poste }}</p>
-                        <p><strong>Position :</strong> {{ preview.position }}</p>
-                        <p><strong>Coefficient :</strong> {{ preview.coefficient }}</p>
-                        <p><strong>Lieu de travail :</strong> {{ preview.lieu_de_travail }}</p>
-                        <p><strong>Limitation géographique régionale :</strong> {{ preview.limit_geo_region }}</p>
-                        <p><strong>Nom de l'entreprise :</strong> {{ preview.entreprise_nom }}</p>
-                    {% elif type_doc == "attestation_employeur" %}
-                        <p><strong>Civilité :</strong> {{ preview.civilite }}</p>
-                        <p><strong>Nom :</strong> {{ preview.nom }}</p>
-                        <p><strong>Prénom :</strong> {{ preview.prenom }}</p>
-                        <p><strong>Poste :</strong> {{ preview.poste }}</p>
-                        <p><strong>Date du poste :</strong> {{ preview.date_poste  }}</p>
-                        <p><strong>Entreprise :</strong> {{ preview.entreprise_nom }}</p>
-                    {% elif type_doc == "attestation_de_remise_de_materiel" %}
-                        <p><strong>Civilité :</strong> {{ preview.civilite }}</p>
-                        <p><strong>Nom :</strong> {{ preview.nom }}</p>
-                        <p><strong>Prénom :</strong> {{ preview.prenom }}</p>
-                        <p><strong>Poste :</strong> {{ preview.poste }}</p>
-                        <p><strong>Matériel :</strong> {{ preview.marque }} - {{ preview.cpu }}</p>
-                        <p><strong>N° Série :</strong> {{ preview.numero_serie }}</p>
-                        <p><strong>RAM :</strong> {{ preview.ram }}</p>
-                        <p><strong>Stockage :</strong> {{ preview.ssd }}</p>
-                        <p><strong>Valeur Neuf :</strong> {{ preview.valeur_neuf }}</p>
-                    {% endif %}
-
-                    <form method="post" id="generate-form">
-                        {% csrf_token %}
-                        <input type="hidden" name="prenom" value="{{ preview.prenom }}">
-                        <input type="hidden" name="nom" value="{{ preview.nom }}">
-                        <input type="hidden" name="type_doc" value="{{ type_doc }}">
-                        <input type="hidden" name="generate" value="1">
-                        <button type="submit" name="action" value="generate" id="generate-btn">Accepter</button>
-                    </form>
-                {% else %}
-                    <p>Aucune donnée à afficher.</p>
+                {% if error_message %}
+                    <p style="color: red; font-weight: bold;">{{ error_message }}</p>
                 {% endif %}
             </div>
-        </div>
-    </div>
-</div>
-<script>
-    // Affiche le loader
-    function showLoader() {
-        document.getElementById('loader-overlay').style.display = 'flex';
-    }
-    // Masque le loader
-    function hideLoader() {
-        document.getElementById('loader-overlay').style.display = 'none';
-    }
+            <div class="preview-panel">
+                <h2>Prévisualisation</h2>
+                {% if preview %}
+                    <div style="margin-bottom:16px;">
+                        <img src="{{ preview.photo }}" alt="Photo" style="max-width:180px;max-height:180px;border-radius:8px;box-shadow:0 2px 8px #aaa;">
+                        <div style="font-size:12px;color:#888;word-break:break-all;">{{ photo }}</div>
+                    </div>
+                {% endif %}
+                <div style="width:100%;">
+                    {% if preview %}
+                        {% if type_doc == "contrat_cdi" %}
+                            <p><strong>Civilité :</strong> {{ preview.civilite }}</p>
+                            <p><strong>Nom :</strong> {{ preview.nom }}</p>
+                            <p><strong>Prénom :</strong> {{ preview.prenom }}</p>
+                            <p><strong>Date de naissance :</strong> {{ preview.date_de_naissance }}</p>
+                            <p><strong>Lieu de naissance :</strong> {{ preview.lieu_de_naissance }}</p>
+                            <p><strong>Nationalité :</strong> {{ preview.nationalite }}</p>
+                            <p><strong>Adresse :</strong> {{ preview.adresse_maison }}</p>
+                            <p><strong>Numéro de sécurité sociale :</strong> {{ preview.num_secu }}</p>
+                            <p><strong>Titre de séjour :</strong> {{ preview.titre_sejour }}</p>
+                            <p><strong>Numéro de séjour :</strong> {{ preview.num_sejour }}</p>
+                            <p><strong>Date de validité du séjour :</strong> {{ preview.date_valable_sejour }}</p>
+                            <p><strong>Poste :</strong> {{ preview.poste }}</p>
+                            <p><strong>Salaire net :</strong> {{ preview.salaire_net }}</p>
+                            <p><strong>Salaire brut annuel :</strong> {{ preview.salaire_brut }}</p>
+                            <p><strong>Salaire brut mensuel :</strong> {{ preview.salaire_brut_mois }}</p>
+                            <p><strong>Date du poste :</strong> {{ preview.date_poste }}</p>
+                            <p><strong>Position :</strong> {{ preview.position }}</p>
+                            <p><strong>Coefficient :</strong> {{ preview.coefficient }}</p>
+                            <p><strong>Lieu de travail :</strong> {{ preview.lieu_de_travail }}</p>
+                            <p><strong>Limitation géographique régionale :</strong> {{ preview.limit_geo_region }}</p>
+                            <p><strong>Nom de l'entreprise :</strong> {{ preview.entreprise_nom }}</p>
+                        {% elif type_doc == "attestation_employeur" %}
+                            <p><strong>Civilité :</strong> {{ preview.civilite }}</p>
+                            <p><strong>Nom :</strong> {{ preview.nom }}</p>
+                            <p><strong>Prénom :</strong> {{ preview.prenom }}</p>
+                            <p><strong>Poste :</strong> {{ preview.poste }}</p>
+                            <p><strong>Date du poste :</strong> {{ preview.date_poste  }}</p>
+                            <p><strong>Entreprise :</strong> {{ preview.entreprise_nom }}</p>
+                        {% elif type_doc == "attestation_de_remise_de_materiel" %}
+                            <p><strong>Civilité :</strong> {{ preview.civilite }}</p>
+                            <p><strong>Nom :</strong> {{ preview.nom }}</p>
+                            <p><strong>Prénom :</strong> {{ preview.prenom }}</p>
+                            <p><strong>Poste :</strong> {{ preview.poste }}</p>
+                            <p><strong>Matériel :</strong> {{ preview.marque }} - {{ preview.cpu }}</p>
+                            <p><strong>N° Série :</strong> {{ preview.numero_serie }}</p>
+                            <p><strong>RAM :</strong> {{ preview.ram }}</p>
+                            <p><strong>Stockage :</strong> {{ preview.ssd }}</p>
+                            <p><strong>Valeur Neuf :</strong> {{ preview.valeur_neuf }}</p>
+                        {% endif %}
 
-    // Loader lors du changement de prénom (submit automatique)
+                        <form method="post" id="generate-form">
+                            {% csrf_token %}
+                            <input type="hidden" name="prenom" value="{{ preview.prenom }}">
+                            <input type="hidden" name="nom" value="{{ preview.nom }}">
+                            <input type="hidden" name="type_doc" value="{{ type_doc }}">
+                            <input type="hidden" name="generate" value="1">
+                            <button type="submit" name="action" value="generate" id="generate-btn">Accepter</button>
+                        </form>
+                    {% else %}
+                        <p>Aucune donnée à afficher.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+<style>
+    .form-preview-flex {
+        display: flex;
+        flex-direction: row;
+        gap: 40px;
+        align-items: flex-start;
+        margin-top: 32px;
+    }
+    .form-panel {
+        min-width: 320px;
+        max-width: 400px;
+        flex: 1 1 350px;
+    }
+    .preview-panel {
+        min-width: 320px;
+        max-width: 500px;
+        flex: 1 1 400px;
+        background: #f8fafd;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px #e0e7ef;
+        padding: 24px 20px 20px 20px;
+    }
+</style>
     document.getElementById('prenom').addEventListener('change', function() {
         showLoader();
         document.getElementById('doc-form').submit();
