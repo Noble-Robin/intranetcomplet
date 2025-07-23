@@ -153,7 +153,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         currentSectionId = sectionId;
         currentResourceBtn = btn;
-        openFileModal('/Cours Test/');
+        openFileModal('/Cours%20Test/');
     };
     
     console.log('🚀 DEBUG: Fonction addResource définie sur window:', typeof window.addResource);
@@ -188,7 +188,7 @@ document.addEventListener('DOMContentLoaded', () => {
     modalClose.addEventListener('click', closeFileModal);
     modal.addEventListener('click', (e) => {
         if (e.target === modal) {
-            closeFileModal();
+            closeFileModal();/nc_dir/
         }
     });
 
