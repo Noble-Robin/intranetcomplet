@@ -90,7 +90,7 @@
       <td>{{ course.year }}</td>
       <td>{{ course.formation }}</td>
       <td>
-        <a href="/moodle/courses/edit/{{ course.id }}/" class="btn btn-sm btn-primary">Modifier</a>
+        <a href="{% url 'edit_course' course.id %}" class="btn btn-sm btn-primary">Modifier</a>
       </td>
     </tr>
   {% endfor %}
