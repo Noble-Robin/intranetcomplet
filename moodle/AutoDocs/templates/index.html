@@ -193,17 +193,32 @@
             if (generateBtn) {
                 generateBtn.addEventListener('click', function() {
                     showLoader();
-                    // Ajout : masquer le loader après un délai raisonnable (ex: 3s) si la page ne se recharge pas
                     setTimeout(function() {
                         hideLoader();
                     }, 7000);
                 });
             }
-        });
+            // --- Switch thème clair/sombre ---
+            const toggle = document.getElementById('themeToggle');
+            const root = document.documentElement;
+            let stored = localStorage.getItem('darkMode');
+            let dark = stored === 'true' || (!stored && window.matchMedia('(prefers-color-scheme: dark)').matches);
 
-        // Masquer le loader après chargement de la page
-        window.addEventListener('load', function() {
-            hideLoader();
+            function applyTheme() {
+                if (dark) {
+                    root.setAttribute('data-theme', 'dark');
+                } else {
+                    root.removeAttribute('data-theme');
+                }
+            }
+            if (toggle) {
+                toggle.addEventListener('click', function() {
+                    dark = !dark;
+                    localStorage.setItem('darkMode', dark);
+                    applyTheme();
+                });
+            }
+            applyTheme();
         });
     </script>
 </body>
