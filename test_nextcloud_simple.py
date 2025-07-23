@@ -20,10 +20,13 @@ def test_nextcloud_connection():
         return
 
     # Construire l'URL WebDAV pour le dossier 'Cours Test'
+
+    import urllib.parse
     folder_path = 'Cours Test/'
+    encoded_path = urllib.parse.quote(folder_path)
     if not nc_webdav.endswith('/'):
         nc_webdav += '/'
-    url = nc_webdav + folder_path
+    url = nc_webdav + encoded_path
 
     print(f"Test de connexion à Nextcloud WebDAV: {url}")
     try:
