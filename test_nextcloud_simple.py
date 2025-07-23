@@ -5,13 +5,15 @@ def test_nextcloud_connection():
     """
     Teste la connexion WebDAV à Nextcloud et liste le dossier 'Cours Test'.
     """
-    # Récupérer les variables d'environnement
-    nc_webdav = os.getenv('NEXTCLOUD_WEBDAV_URL')
-    nc_user = os.getenv('NEXTCLOUD_USER')
-    nc_password = os.getenv('NEXTCLOUD_PASSWORD')
 
+    # Définir les variables statiquement ici
+    nc_webdav = "https://votre-nextcloud.fr/remote.php/dav/files/r.noble/"  # Remplacez par votre URL WebDAV
+    nc_user = "r.noble"  # Remplacez par votre identifiant Nextcloud
+    nc_password = "aCX^qz9W5G19LT"  # Remplacez par votre mot de passe Nextcloud
+
+    # Vérification basique
     if not all([nc_webdav, nc_user, nc_password]):
-        print("Variables d'environnement Nextcloud manquantes.")
+        print("Variables Nextcloud manquantes.")
         print(f"NEXTCLOUD_WEBDAV_URL: {nc_webdav}")
         print(f"NEXTCLOUD_USER: {nc_user}")
         print(f"NEXTCLOUD_PASSWORD: {'***' if nc_password else None}")
