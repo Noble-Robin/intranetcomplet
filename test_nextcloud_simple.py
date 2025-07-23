@@ -13,10 +13,10 @@ def test_nextcloud_connection():
 
     # Liste de chemins à tester
     paths = [
-        "https://capdrive.caplogy.com/remote.php/dav/files/r.noble/",  # chemin standard utilisateur
-        "https://capdrive.caplogy.com/remote.php/dav/files/r.noble",   # sans slash final
-        "https://capdrive.caplogy.com/remote.php/dav/files/DC89BA57-E31B-401B-81EB-B01276E0B218/", # chemin ID
-        "https://capdrive.caplogy.com/remote.php/dav/files/DC89BA57-E31B-401B-81EB-B01276E0B218",  # ID sans slash
+        "http://10.3.0.103/remote.php/dav/files/r.noble/",  # chemin standard utilisateur
+        "http://10.3.0.103/remote.php/dav/files/r.noble",   # sans slash final
+        "http://10.3.0.103/remote.php/dav/files/DC89BA57-E31B-401B-81EB-B01276E0B218/", # chemin ID
+        "http://10.3.0.103/remote.php/dav/files/DC89BA57-E31B-401B-81EB-B01276E0B218",  # ID sans slash
     ]
 
     for url in paths:
