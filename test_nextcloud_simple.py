@@ -13,7 +13,7 @@ def test_nextcloud_connection():
 
     # Liste de chemins à tester
     paths = [
-        "https://51.68.102.116:4443/remote.php/dav/files/r.noble/",  # chemin standard utilisateur
+        "https://capdrive.caplogy.com:4443/remote.php/dav/files/r.noble/",  # chemin standard utilisateur
         "https://capdrive.caplogy.com/remote.php/dav/files/r.noble",   # sans slash final
         "https://capdrive.caplogy.com/remote.php/dav/files/DC89BA57-E31B-401B-81EB-B01276E0B218/", # chemin ID
         "https://capdrive.caplogy.com/remote.php/dav/files/DC89BA57-E31B-401B-81EB-B01276E0B218",  # ID sans slash
