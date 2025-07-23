@@ -7,7 +7,7 @@ def test_nextcloud_connection():
     """
 
     # Définir les variables statiquement ici
-    nc_webdav = "https://votre-nextcloud.fr/remote.php/dav/files/r.noble/"  # Remplacez par votre URL WebDAV
+    nc_webdav = "https://capdrive.caplogy.com/remote.php/dav/files/r.noble/"  # Remplacez par votre URL WebDAV
     nc_user = "r.noble"  # Remplacez par votre identifiant Nextcloud
     nc_password = "aCX^qz9W5G19LT"  # Remplacez par votre mot de passe Nextcloud
 
