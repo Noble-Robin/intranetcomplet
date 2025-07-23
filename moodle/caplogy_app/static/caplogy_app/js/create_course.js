@@ -256,7 +256,7 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('DEBUG: Chemin entièrement encodé:', fullyEncodedPath);
 
         // Faire l'appel AJAX pour récupérer les fichiers Nextcloud
-        fetch(`/nc_dir/?path=${fullyEncodedPath}`, {
+        fetch(`/moodle/nc_dir/?path=${fullyEncodedPath}`, {
             signal: controller.signal,
             headers: {
                 'X-Requested-With': 'XMLHttpRequest'
