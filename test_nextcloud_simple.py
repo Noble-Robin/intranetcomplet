@@ -26,7 +26,8 @@ def test_nextcloud_connection():
                 method='PROPFIND',
                 url=url,
                 auth=(nc_user, nc_password),
-                timeout=15
+                timeout=15,
+                verify=False  # Ignore la vérification du certificat SSL
             )
             print(f"Statut HTTP: {response.status_code}")
             if response.status_code in [200, 207]:
