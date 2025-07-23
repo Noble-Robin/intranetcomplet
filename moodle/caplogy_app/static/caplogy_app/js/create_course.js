@@ -153,7 +153,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         currentSectionId = sectionId;
         currentResourceBtn = btn;
-        openFileModal('Cours%20Test/');
+        openFileModal('Cours Test/');
     };
     
     console.log('🚀 DEBUG: Fonction addResource définie sur window:', typeof window.addResource);
