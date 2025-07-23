@@ -9,7 +9,6 @@ from .views_homepage import homepage
 urlpatterns = [
     path('logout/', lambda r: (logout(r), redirect('login'))[1], name='logout'),
     path('login/',  views.login_view,   name='login'),
-    path('logout/', lambda r: (logout(r), redirect('login'))[1], name='logout'),
     path('admin_page/',  views.admin_view,    name='admin_page'),
     path('users/promote/', views.promote_to_admin, name='promote_to_admin'),
     
