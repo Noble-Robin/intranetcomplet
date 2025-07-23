@@ -82,7 +82,19 @@
                     <th>Actions</th>
                 </tr>
             </thead>
-            <tbody></tbody>
+<tbody>
+  {% for course in courses %}
+    <tr>
+      <td>{{ course.title }}</td>
+      <td>{{ course.school }}</td>
+      <td>{{ course.year }}</td>
+      <td>{{ course.formation }}</td>
+      <td>
+        <a href="/moodle/courses/edit/{{ course.id }}/" class="btn btn-sm btn-primary">Modifier</a>
+      </td>
+    </tr>
+  {% endfor %}
+</tbody>
         </table>
     </section>
 </div>
