@@ -1028,7 +1028,7 @@ def list_nc_dir(request):
         
         return JsonResponse({'folders': folders, 'files': files})
     except requests.exceptions.Timeout:
-        error_msg = f'Timeout Nextcloud: Le serveur met trop de temps à répondre (>{nc_api.timeout[1]}s). Réessayez ou contactez l\'administrateur.'
+        error_msg = "Timeout Nextcloud: Le serveur met trop de temps à répondre (>30s). Réessayez ou contactez l'administrateur."
         print(f"[ERROR] {error_msg}")
         return JsonResponse({
             'error': error_msg,
