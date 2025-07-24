@@ -92,7 +92,7 @@ class NextcloudAPI:
         if not path.startswith('/'):
             path = f"{path}"
         print(f"[DEBUG] Chemin transmis à Nextcloud: {path}")
-        encoded_path = quote(path, safe='/')
+        encoded_path = quote(path)
         print(f"[DEBUG] Chemin encodé: {encoded_path}")
         headers = {'OCS-APIRequest': 'true', 'Accept': 'application/xml'}
         data = {'path': encoded_path, 'shareType': 3, 'permissions': 1}
