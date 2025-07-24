@@ -124,7 +124,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
-    resource_path('static'),
+    resource_path('static'), 
 ]
 
 STATIC_ROOT = resource_path('staticfiles')

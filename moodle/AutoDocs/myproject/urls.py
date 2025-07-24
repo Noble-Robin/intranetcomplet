@@ -16,9 +16,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from myproject import views
+from . import views
 
-urlpatterns = [
+urlpatterns = [ 
     path('admin/', admin.site.urls),
     path('', views.index, name='index'),
     path('', views.index, name='generer_contrat_cdi'),

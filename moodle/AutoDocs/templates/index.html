@@ -6,30 +6,6 @@
     <title>Caplogy - Générateur de documents</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="{% static 'autodocs/home.css' %}" />
-    <style>
-        /* Loader styles */
-        .loader-overlay {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(255,255,255,0.7);
-            z-index: 9999;
-            display: none;
-            align-items: center;
-            justify-content: center;
-        }
-        .spinner {
-            border: 8px solid #f3f3f3;
-            border-top: 8px solid #3498db;
-            border-radius: 50%;
-            width: 60px;
-            height: 60px;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg);}
-            100% { transform: rotate(360deg);}
-        }
-    </style>
 </head>
 <body>
     <div class="loader-overlay" id="loader-overlay">
@@ -49,6 +25,9 @@
                     <option value="attestation_de_remise_de_materiel" {% if type_doc == "attestation_de_remise_de_materiel" %}selected{% endif %}>
                         Attestation de remise de matériel
                     </option>
+                    <option value="attestation_de_restitution_de_materiel_informatique" {% if type_doc == "attestation_de_restitution_de_materiel_informatique" %}selected{% endif %}>
+                        Attestation de restitution de matériel informatique
+                    </option>
                     <option value="attestation_employeur" {% if type_doc == "attestation_employeur" %}selected{% endif %}>
                         Attestation employeur
                     </option>
@@ -57,13 +36,42 @@
                     </option>
                 </select>
 
-                <label for="prenom">Prénom :</label>
-                <select id="prenom" name="prenom" required>
-                    <option value="">-- Choisir un prénom --</option>
-                    {% for prenom in prenoms %}
-                        <option value="{{ prenom }}" {% if prenom == select_prenom %}selected{% endif %}>{{ prenom }}</option>
+                <label for="materiel">Marque :</label>
+                <select id="materiel" name="materiel">
+                    <option value="">-- Choisir une marque --</option>
+                    {% for marque in marques_uniques %}
+                        <option value="{{ marque }}" {% if marque == selected_marque %}selected{% endif %}>
+                            {{ marque }}
+                        </option>
                     {% endfor %}
                 </select>
+
+                <label for="modele">Modèle :</label>
+                <select id="modele" name="modele">
+                    <option value="">-- Choisir un modèle --</option>
+                    {% for modele in modeles_uniques %}
+                        <option value="{{ modele }}" {% if modele == selected_modele %}selected{% endif %}>
+                            {{ modele }}
+                        </option>
+                    {% endfor %}
+                </select>
+
+                <label for="numero_serie">Numéro de série :</label>
+                <select id="numero_serie" name="numero_serie">
+                    <option value="">-- Choisir un numéro de série --</option>
+                    {% for item in materiels %}
+                        {% if item.marques == selected_marque and item.modele == selected_modele %}
+                            <option value="{{ item.numero_serie }}" {% if item.numero_serie == selected_numero_serie %}selected{% endif %}>
+                                {{ item.numero_serie }}
+                            </option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+
+                <label for="prenom">Prénom :</label>
+                <input list="prenoms-list" id="prenom" name="prenom" value="{{ select_prenom }}" autocomplete="off" required class="input-like-select">
+
+                <div id="prenom-suggestions" class="datalist-suggestions" style="display:none;"></div>
 
                 <label for="nom">Nom :</label>
                 <select id="nom" name="nom" required>
@@ -138,11 +146,22 @@
                         <p><strong>Nom :</strong> {{ preview.nom }}</p>
                         <p><strong>Prénom :</strong> {{ preview.prenom }}</p>
                         <p><strong>Poste :</strong> {{ preview.poste }}</p>
-                        <p><strong>Matériel :</strong> {{ preview.marque }} - {{ preview.cpu }}</p>
+                        <p><strong>Matériel :</strong> {{ preview.marque }} - {{ preview.modele }}</p>
+                        <p><strong>CPU :</strong> {{ preview.cpu }}</p>
                         <p><strong>N° Série :</strong> {{ preview.numero_serie }}</p>
                         <p><strong>RAM :</strong> {{ preview.ram }}</p>
                         <p><strong>Stockage :</strong> {{ preview.ssd }}</p>
                         <p><strong>Valeur Neuf :</strong> {{ preview.valeur_neuf }}</p>
+                    {% elif type_doc == "attestation_de_restitution_de_materiel_informatique" %}
+                        <p><strong>Civilité :</strong> {{ preview.civilite }}</p>
+                        <p><strong>Nom :</strong> {{ preview.nom }}</p>
+                        <p><strong>Prénom :</strong> {{ preview.prenom }}</p>
+                        <p><strong>Poste :</strong> {{ preview.poste }}</p>
+                        <p><strong>Matériel :</strong> {{ preview.marque }} - {{ preview.modele }}</p>
+                        <p><strong>CPU :</strong> {{ preview.cpu }}</p>
+                        <p><strong>N° Série :</strong> {{ preview.numero_serie }}</p>
+                        <p><strong>RAM :</strong> {{ preview.ram }}</p>
+                        <p><strong>Stockage :</strong> {{ preview.ssd }}</p>
                     {% endif %}
 
                     <form method="post" id="generate-form">
@@ -151,6 +170,10 @@
                         <input type="hidden" name="nom" value="{{ preview.nom }}">
                         <input type="hidden" name="type_doc" value="{{ type_doc }}">
                         <input type="hidden" name="generate" value="1">
+                        <!-- Ajout pour la génération PDF -->
+                        <input type="hidden" name="materiel" value="{{ preview.marque }}">
+                        <input type="hidden" name="modele" value="{{ preview.modele }}">
+                        <input type="hidden" name="numero_serie" value="{{ preview.numero_serie }}">
                         <button type="submit" name="action" value="generate" id="generate-btn">Accepter</button>
                     </form>
                 {% else %}
@@ -190,18 +213,120 @@
             if (generateBtn) {
                 generateBtn.addEventListener('click', function() {
                     showLoader();
-                    // Ajout : masquer le loader après un délai raisonnable (ex: 3s) si la page ne se recharge pas
                     setTimeout(function() {
                         hideLoader();
                     }, 7000);
                 });
             }
+            // --- Switch thème clair/sombre ---
+            const toggle = document.getElementById('themeToggle');
+            const root = document.documentElement;
+            let stored = localStorage.getItem('darkMode');
+            let dark = stored === 'true' || (!stored && window.matchMedia('(prefers-color-scheme: dark)').matches);
+
+            function applyTheme() {
+                if (dark) {
+                    root.setAttribute('data-theme', 'dark');
+                } else {
+                    root.removeAttribute('data-theme');
+                }
+            }
+            if (toggle) {
+                toggle.addEventListener('click', function() {
+                    dark = !dark;
+                    localStorage.setItem('darkMode', dark);
+                    applyTheme();
+                });
+            }
+            applyTheme();
         });
 
-        // Masquer le loader après chargement de la page
-        window.addEventListener('load', function() {
-            hideLoader();
+        // Loader lors du changement de marque (pour charger les modèles)
+        document.getElementById('materiel').addEventListener('change', function() {
+            showLoader();
+            document.getElementById('doc-form').submit();
         });
+
+        // Loader lors du changement de modèle (pour charger les numéros de série)
+        document.getElementById('modele').addEventListener('change', function() {
+            showLoader();
+            document.getElementById('doc-form').submit();
+        });
+
+        // Suggestions personnalisées pour l'input prénom
+        (function() {
+            const prenoms = [{% for prenom in prenoms %}"{{ prenom|escapejs }}",{% endfor %}];
+            const input = document.getElementById('prenom');
+            const suggestionBox = document.getElementById('prenom-suggestions');
+            let currentFocus = -1;
+
+            input.addEventListener('input', function() {
+                const val = this.value.trim().toLowerCase();
+                suggestionBox.innerHTML = '';
+                if (!val) {
+                    suggestionBox.style.display = 'none';
+                    return;
+                }
+                const matches = prenoms.filter(p => p.toLowerCase().includes(val));
+                if (matches.length === 0) {
+                    suggestionBox.style.display = 'none';
+                    return;
+                }
+                matches.forEach((p, idx) => {
+                    const div = document.createElement('div');
+                    div.textContent = p;
+                    div.onmousedown = function(e) { // Utilise onmousedown pour garantir la sélection avant le blur
+                        e.preventDefault();
+                        input.value = p;
+                        suggestionBox.style.display = 'none';
+                        input.dispatchEvent(new Event('change'));
+                    };
+                    suggestionBox.appendChild(div);
+                });
+                // Positionnement sous l'input
+                const rect = input.getBoundingClientRect();
+                suggestionBox.style.left = input.offsetLeft + "px";
+                suggestionBox.style.top = (input.offsetTop + input.offsetHeight) + "px";
+                suggestionBox.style.width = input.offsetWidth + "px";
+                suggestionBox.style.display = 'block';
+                currentFocus = -1;
+            });
+
+            // Navigation clavier
+            input.addEventListener('keydown', function(e) {
+                let items = suggestionBox.querySelectorAll('div');
+                if (!items.length) return;
+                if (e.key === "ArrowDown") {
+                    currentFocus++;
+                    if (currentFocus >= items.length) currentFocus = 0;
+                    setActive(items);
+                    e.preventDefault();
+                } else if (e.key === "ArrowUp") {
+                    currentFocus--;
+                    if (currentFocus < 0) currentFocus = items.length - 1;
+                    setActive(items);
+                    e.preventDefault();
+                } else if (e.key === "Enter") {
+                    if (currentFocus > -1) {
+                        items[currentFocus].click();
+                        e.preventDefault();
+                    }
+                }
+            });
+
+            function setActive(items) {
+                items.forEach((el, idx) => {
+                    el.classList.toggle('active', idx === currentFocus);
+                });
+            }
+
+            // Fermer suggestions si clic ailleurs
+            document.addEventListener('click', function(e) {
+                if (e.target !== input) {
+                    suggestionBox.style.display = 'none';
+                }
+            });
+        })();
     </script>
 </body>
 </html>

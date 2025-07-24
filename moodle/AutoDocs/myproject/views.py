@@ -10,11 +10,14 @@ from datetime import date
 from datetime import datetime
 import requests
 from dotenv import load_dotenv
+from pyairtable import Table
+import unicodedata
+import re
 from django.contrib.auth.decorators import login_required
+from ..utils_group_required import group_required
 
 from xhtml2pdf import pisa
 from io import BytesIO
-import unicodedata
 
 # Charge les variables d'environnement depuis .env
 load_dotenv(os.path.join(settings.BASE_DIR, ".env"))
@@ -28,6 +31,11 @@ AIRTABLE_TABLE_ID = os.environ.get("AIRTABLE_TABLE_ID")
 AIRTABLE_ENTREPRISE_API_KEY = os.environ.get("AIRTABLE_ENTREPRISE_API_KEY")
 AIRTABLE_ENTREPRISE_BASE_ID = os.environ.get("AIRTABLE_ENTREPRISE_BASE_ID")
 AIRTABLE_ENTREPRISE_TABLE_ID = os.environ.get("AIRTABLE_ENTREPRISE_TABLE_ID")
+
+# Matériel informatique
+AIRTABLE_MATERIEL_API_KEY = os.environ.get("AIRTABLE_MATERIEL_API_KEY")
+AIRTABLE_MATERIEL_BASE_ID = os.environ.get("AIRTABLE_MATERIEL_BASE_ID")
+AIRTABLE_MATERIEL_TABLE_ID = os.environ.get("AIRTABLE_MATERIEL_TABLE_ID")
 
 # Chemin vers ta base SQLite
 db_path = os.path.join(settings.BASE_DIR, "Data", "Caplogy.db")
@@ -56,7 +64,24 @@ def download_image_to_static(url, fallback_path, filename="logo.png"):
         print(f"[ERROR] Impossible de télécharger l'image Airtable: {e}")
     return fallback_path  # fallback si problème
 
+def normalize_field_name(name):
+    name = unicodedata.normalize('NFKD', name).encode('ascii', 'ignore').decode('ascii')
+    name = name.lower().replace(' ', '_')
+    name = re.sub(r'[^a-z0-9_]', '', name)
+    return name
 
+def get_airtable_materiel_by_marque_modele(marque, modele):
+    api_key = os.environ.get("AIRTABLE_MATERIEL_API_KEY")
+    base_id = os.environ.get("AIRTABLE_MATERIEL_BASE_ID")
+    table_id = os.environ.get("AIRTABLE_MATERIEL_TABLE_ID")
+    table = Table(api_key, base_id, table_id)
+    records = table.all()
+    for rec in records:
+        fields = rec.get("fields", {})
+        # On garde les noms EXACTS Airtable pour le contexte
+        if fields.get("Marques") == marque and fields.get("Modèle") == modele:
+            return fields
+    return {}
 
 
 def airtable(prenom, nom):
@@ -135,11 +160,8 @@ def airtable_entreprise(nom_entreprise):
             return records[0]["fields"]
     return None
 
-
-from ..utils_group_required import group_required
 @login_required
 @group_required('admin', 'rh')
-
 def index(request):
     context = None
     type_doc = None
@@ -150,6 +172,25 @@ def index(request):
 
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
+
+    api_key = os.environ.get("AIRTABLE_MATERIEL_API_KEY")
+    base_id = os.environ.get("AIRTABLE_MATERIEL_BASE_ID")
+    table_id = os.environ.get("AIRTABLE_MATERIEL_TABLE_ID")
+    table = Table(api_key, base_id, table_id)
+    records = table.all()
+    materiels = []
+    for rec in records:
+        fields = rec.get("fields", {})
+        # Normalisation snake_case pour le template
+        normalized = {}
+        for k, v in fields.items():
+            key = k.lower().replace(" ", "_").replace("é", "e").replace("è", "e").replace("à", "a")
+            normalized[key] = v
+        # Correction : alias pour le numéro de série
+        if "numero_de_serie" in normalized and "numero_serie" not in normalized:
+            normalized["numero_serie"] = normalized["numero_de_serie"]
+        materiels.append(normalized)
+    # print("Materiels normalises:", materiels)  # <-- Print la liste normalisée
 
     ip = request.META.get('REMOTE_ADDR', '')
     ville = "Inconnue"
@@ -364,21 +405,31 @@ def index(request):
                 materiel_cols = [column[0] for column in cursor.description]
                 materiel_data = dict(zip(materiel_cols, materiel_row))
 
-            # Choix template + dossier
+            # Choix template
             if type_doc == "contrat_cdi":
                 template_name = "templates_docs/contrat_cdi.html"
-                dossier = os.path.join(settings.BASE_DIR, "Contrat", "CDI")
             elif type_doc == "attestation_de_remise_de_materiel":
                 template_name = "templates_docs/attestation_de_remise_de_materiel.html"
-                dossier = os.path.join(settings.BASE_DIR, "Attestation", "Remise")
+            elif type_doc == "attestation_de_restitution_de_materiel_informatique":
+                template_name = "templates_docs/attestation_de_restitution_de_materiel_informatique.html"
             elif type_doc == "attestation_employeur":
                 template_name = "templates_docs/attestation_employeur.html"
-                dossier = os.path.join(settings.BASE_DIR, "Attestation", "Employeur")
             else:
                 template_name = "templates_docs/default.html"
-                dossier = os.path.join(settings.BASE_DIR, "Autres")
-
-            os.makedirs(dossier, exist_ok=True)
+            
+            selected_marque = request.POST.get("materiel", "")
+            selected_modele = request.POST.get("modele", "")
+            selected_numero_serie = request.POST.get("numero_serie", "")
+            selected_materiel = None
+            for item in materiels:
+                if (
+                    item.get("marques") == selected_marque and
+                    item.get("modele") == selected_modele and
+                    item.get("numero_serie") == selected_numero_serie
+                ):
+                    selected_materiel = item
+                    break
+        
 
             # Préparation contexte template
             context = {
@@ -424,19 +475,43 @@ def index(request):
                 "ram": materiel_data.get("ram", ""),
                 "ssd": materiel_data.get("ssd", ""),
                 "valeur_neuf": materiel_data.get("valeur_neuf", ""),
+                "sacoche_souris": materiel_data.get("sacoche_souris", ""),
+
+                "marque": selected_materiel.get("marques", "") if selected_materiel else materiel_data.get("marque", ""),
+                "modele": selected_materiel.get("modele", "") if selected_materiel else materiel_data.get("modele", ""),
+                "cpu": selected_materiel.get("cpu", "") if selected_materiel else materiel_data.get("cpu", ""),
+                "numero_serie": selected_materiel.get("numero_serie", "") if selected_materiel else materiel_data.get("numero_serie", ""),
+                "ram": (
+                    str(selected_materiel.get("ram_gb", ""))
+                    if selected_materiel and selected_materiel.get("ram_gb", "") != ""
+                    else str(selected_materiel.get("ram", "")) if selected_materiel else str(materiel_data.get("ram", ""))
+                ),
+                "ssd": (
+                    str(selected_materiel.get("stockage_gb", ""))
+                    if selected_materiel and selected_materiel.get("stockage_gb", "") != ""
+                    else str(selected_materiel.get("ssd", "")) if selected_materiel else str(materiel_data.get("ssd", ""))
+                ),
+                "valeur_neuf": selected_materiel.get("valeur_neuf", "") if selected_materiel else materiel_data.get("valeur_neuf", ""),
+                "sacoche_souris": selected_materiel.get("sacoche_souris", "") if selected_materiel else materiel_data.get("sacoche_souris", ""),
+
 
 
                 # logo
                 "logo": download_image_to_static(entreprise_data.get("logo", "") or user_data.get("logo", ""), logo_path),
                 "cachet": download_image_to_static(entreprise_data.get("cachet", "") or user_data.get("cachet", ""), cachet_path),
 
-                # date
+                #date
                 "date_document": date.today().strftime("%d/%m/%Y"),
-                "ville": ville,
             }
 
             # Générer PDF
             if is_generate:
+                # Ajout debug : affiche tout le contexte utilisé pour le PDF
+                print("=== CONTEXTE PDF ===")
+                for k, v in context.items():
+                    if k in ("marque", "modele", "cpu", "numero_serie", "ram", "ssd", "sacoche_souris"):
+                        print(f"{k}: {v!r}")
+
                 html_string = render_to_string(template_name, context)
                 result = BytesIO()
                 pisa_status = pisa.CreatePDF(html_string, dest=result)
@@ -447,7 +522,7 @@ def index(request):
 
                 pdf_file = result.getvalue()
                 filename = f"{type_doc}_{select_prenom}_{select_nom}.pdf"
-                file_path = os.path.join(dossier, filename)
+                file_path = os.path.join(filename)
                 with open(file_path, "wb") as f:
                     f.write(pdf_file)
 
@@ -465,7 +540,15 @@ def index(request):
 
     conn.close()
 
-    return render(request, "index.html", {
+    marques_uniques = sorted({item.get("marques", "") for item in materiels if item.get("marques")})
+    selected_marque = request.POST.get("materiel", "")
+    selected_modele = request.POST.get("modele", "")
+    selected_numero_serie = request.POST.get("numero_serie", "")
+
+    # modeles_uniques : tous les modèles pour la marque sélectionnée
+    modeles_uniques = sorted({item["modele"] for item in materiels if item.get("marques") == selected_marque})
+
+    context = {
         "prenoms": prenoms,
         "noms": noms,
         "select_prenom": select_prenom,
@@ -475,12 +558,18 @@ def index(request):
         "cachet": cachet_path,
         "preview": context if 'context' in locals() else None,
         "type_doc": type_doc if 'type_doc' in locals() else None,
-    })
+        "materiels": materiels,
+        "marques_uniques": marques_uniques,
+        "modeles_uniques": modeles_uniques,
+        "selected_marque": selected_marque,
+        "selected_modele": selected_modele,
+        "selected_numero_serie": selected_numero_serie,
+    }
 
-from ..utils_group_required import group_required
+    return render(request, "index.html", context)
+
 @login_required
 @group_required('admin', 'rh')
-
 def creer_employer(request):
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
@@ -525,14 +614,6 @@ def generer_contrat_cdi(request):
 
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
-    # ip = request.META.get('REMOTE_ADDR', '')
-    # ville = "Versailles"
-    # try:
-    #     response = requests.get(f"https://ipapi.co/{ip}/city/")
-    #     if response.status_code == 200:
-    #         ville = response.text.strip()
-    # except Exception as e:
-    #     print(f"[ERROR] Impossible de récupérer la ville via IP: {e}")
 
     cursor.execute("SELECT id, entreprise_nom FROM entreprise ORDER BY entreprise_nom")
 
@@ -653,15 +734,11 @@ def generer_contrat_cdi(request):
     # Détermination du type de document (ex: contrat_cdi_manuel, contrat_cdi_automatisation)
     type_doc = request.POST.get("type_doc", "contrat_cdi")
 
-    # Choix template et dossier selon type_doc
+    # Choix template selon type_doc
     if type_doc == "contrat_cdi":
         template_name = "templates_docs/contrat_cdi.html"
-        dossier = os.path.join(settings.BASE_DIR, "Contrat", "CDI")
     else:
         template_name = "templates_docs/default.html"
-        dossier = os.path.join(settings.BASE_DIR, "Autres")
-
-    os.makedirs(dossier, exist_ok=True)
 
     logo_url = entreprise_data.get("logo", "")
     cachet_url = entreprise_data.get("cachet", "")
@@ -805,7 +882,7 @@ def generer_contrat_cdi(request):
 
     # Nom fichier clair
     filename = f"{type_doc}_{prenom}_{nom}.pdf"
-    file_path = os.path.join(dossier, filename)
+    file_path = os.path.join(filename)
 
     # Sauvegarde fichier PDF sur disque
     with open(file_path, "wb") as f:
@@ -849,7 +926,7 @@ def modifier_employer(request):
         "Numéro de sécurité sociale": "num_secu",
         "Titre de séjour": "titre_sejour",
         "Numéro du titre de séjour": "num_sejour",
-        "Date de validité": "date_valable_sejour",
+        "Date de validité du titre de séjour": "date_valable_sejour",
         "Intitulé du poste": "poste",
         "Date d'entrée": "date_poste",
         "Position": "position",
@@ -948,7 +1025,7 @@ def modifier_employer(request):
             UPDATE user SET prenom=?, nom=?, civilite=?, date_de_naissance=?, lieu_de_naissance=?, nationalite=?, adresse_maison=?, num_secu=?, titre_sejour=?, num_sejour=?, date_valable_sejour=?, poste=?, date_poste=?, position=?, coefficient=?, lieu_de_travail=?, limit_geo_region=?, entreprise=?, email=?, fonction=?, salaire_brut=?, salaire_brut_mois=?, salaire_net=?, mutation=?, equipe_manageriale=?, statut=?, etat=?, statut_pe=?, last_seen_date=?, responsable_hierarchique=?, departement=?, type_contrat=?, date_sortie=?, matricule=?
             WHERE LOWER(prenom)=LOWER(?) AND LOWER(nom)=LOWER(?)
         """, (
-            form_data.get("prenom"), form_data.get("nom"), form_data.get("civilite"), date_naissance_iso,
+            form_data.get("prenom"), form_data.get("nom"), form_data.get("civilite", ""), date_naissance_iso,
             form_data.get("lieu_de_naissance"), form_data.get("nationalite"), form_data.get("adresse_maison"),
             form_data.get("num_secu"), form_data.get("titre_sejour"), form_data.get("num_sejour"),
             date_valable_sejour_iso, date_poste_iso,
@@ -985,7 +1062,7 @@ def modifier_employer(request):
             "NOM": form_data.get("nom"),
             "NOM et Prénom": nom_complet,
             "Créé par": form_data.get("create_by"),
-            "Photo": form_data.get("photo"),
+            "Photo": [{"url": form_data.get("photo")}] if form_data.get("photo") else None,
             "Cachet": [{"url": form_data.get("cachet")}] if form_data.get("cachet") else None,
             "Logo": [{"url": form_data.get("logo")}] if form_data.get("logo") else None,
             "Email": form_data.get("email"),
@@ -1056,3 +1133,23 @@ def modifier_employer(request):
         "today": localdate().isoformat(),
         "photo": merged_data.get("photo", ""),
     })
+
+@login_required
+@group_required('admin', 'rh')
+def attestation_de_restitution_view(request):
+    # ...récupère marque/modele depuis POST ou session...
+    marque = request.POST.get("materiel", "")
+    modele = request.POST.get("modele", "")
+    materiel_data = get_airtable_materiel_by_marque_modele(marque, modele)
+    context = {
+        "materiel_data": {
+            "ordinateur_marque": materiel_data.get("Marques", ""),
+            "ordinateur_modele": materiel_data.get("Modèle", ""),
+            "cpu": materiel_data.get("CPU", ""),
+            "numero_serie": materiel_data.get("Numéro de série", ""),
+            "ram": materiel_data.get("RAM GB", ""),
+            "ssd": materiel_data.get("Stockage GB", ""),
+            "sacoche_souris": materiel_data.get("Descriptif", ""),
+        },
+    }
+    return render(request, "templates_docs/attestation_de_restitution_de_materiel_informatique.html", context)

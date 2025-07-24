@@ -3,14 +3,14 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Attestation de remise de matériel</title>
+    <title>Attestation de restitution de matériel informatique</title>
     <style>
         body {
             font-family: "Arial", sans-serif;
             margin: 40px;
             font-size: 11px;
             line-height: 1.6;
-            color: #000; 
+            color: #000;
         }
 
         .document-container {
@@ -29,12 +29,12 @@
         }
 
         p {
-            margin-bottom: 10px; /* réduit l'espace entre les paragraphes */
+            margin-bottom: 12px;
         }
 
         table {
             width: 100%;
-            margin-top: 10px; /* réduit l'espace avant la signature */
+            margin-top: 30px;
         }
 
         td {
@@ -58,66 +58,80 @@
           padding: 0 10px;
         }
         .signature {
-          margin-top: 2px;
-          max-width: 20px;
-          height: 420px;
+          margin-top: 10px;
+          max-width: 60px;
+          height: 900px;
         }
 
+        .header-left {
+            text-align: left;
+            font-size: 13px;
+            line-height: 1.3;
+            font-weight: bold;
+        }
+
+        .header-right {
+            text-align: right;
+            font-size: 13px;
+            min-width: 180px;
+        }
+
+        .titre-attestation {
+            font-size: 15px;
+            margin: 18px 0 8px 0;
+            text-align: left;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
      <div style="text-align: center;">
-        <img src="{{ logo }}" alt="Logo" style="width: 120px; margin-bottom: 20px;" />
+        <img src="{{ logo }}" alt="Logo" style="width: 240px; margin-bottom: 20px;" />
     </div>
     <div class="document-container">
-        <p>{{ adresse_localisation }}</p>
+        <div class="header-left">
+            {{ adresse_localisation }}
+        </div>
 
-        <h2>{{ civilite }} {{ prenom}} {{ nom}}</h2>
-        <h3>Attestation de mise à disposition d’un ordinateur portable</h3>
+        <div class="header-right">
+            {{ civilite }} {{ prenom }} {{ nom }}
+        </div>
+        <div class="titre-attestation">Attestation de restitution de matériel informatique</div>
 
         <p>{{ civilite }},</p>
 
         <p>
-            Vous avez signé un contrat de travail à durée indéterminée avec SAS {{ entreprise_nom }}
-            en tant que {{ poste }}.
+            Vous avez signé un contrat de travail à durée indéterminée avec {{ entreprise_nom }}
+            autant que CADRE pour le poste {{ poste }}.
         </p>
 
         <p>
-            Afin de mener à bien vos missions, nous mettons à votre disposition un ordinateur portable dont les
-            caractéristiques sont les suivantes :
+            À ce titre, un ordinateur portable vous avait été confié afin d’accomplir vos missions professionnelles. 
+            Ce matériel était composé des éléments suivants :
         </p>
 
         <ul>
-            <li>{{ sacoche_souris }}</li>
+            {% if sacoche_souris %}
+                <li>{{ sacoche_souris }}</li>
+            {% endif %}
             <li>Ordinateur portable Marque : {{ marque }} - {{ modele }}</li>
             <li>CPU : {{ cpu }}</li>
-            <li>S/N : {{ numero_serie }}</li>
-            <li>{{ ram }} GO RAM</li>
-            <li>{{ ssd }} GO SSD</li>
+            <li>N° Série : {{ numero_serie }}</li>
+            <li>RAM : {{ ram }} Go</li>
+            <li>Stockage : {{ ssd }} Go</li>
         </ul>
 
         <p>
-            Vous êtes tenu(e) de maintenir cet outil de travail en parfait état de fonctionnement. En cas de difficulté,
-            veuillez avertir la direction.
+            Nous vous remercions pour le soin apporté à ce matériel tout au long de sa mise à disposition.
         </p>
 
         <p>
-            Cet ordinateur a une valeur à neuf estimée à {{ valeur_neuf }} euros, et ne doit jamais être laissé
-            dans un endroit à risque de vol, notamment un véhicule, même fermé ou dans un coffre.
+            Nous vous prions de bien vouloir signer cette attestation avec la mention « Lu et approuvé ».
         </p>
 
         <p>
-            Il est strictement réservé à un usage professionnel et ne peut être utilisé par vos proches.
+            Veuillez agréer, {{ civilite }}, l’expression de nos salutations distinguées.
         </p>
-
-        <p>
-            Par la présente attestation signée, vous vous engagez à restituer l’ordinateur en bon état à la fin de votre
-            contrat. Sinon, la valeur à neuf ({{ valeur_neuf }} €) sera déduite de votre solde de tout compte.
-        </p>
-
-        <p>Veuillez signer cette attestation avec la mention « lu et approuvé ».</p>
-
-        <p>Nous vous prions d’agréer, {{ civilite }}, nos salutations distinguées.</p>
 
         <p>Fait à Vélizy-Villacoublay, le {{ date_document }}</p>
 

@@ -1,0 +1,163 @@
+📘 Cahier des Charges — Automatisation RH & Contrats
+I. Objectif général
+Développer une application web en Django permettant :
+
+de gérer les employés via des formulaires complets.
+
+de générer automatiquement des contrats (CDI, etc.) à partir de modèles.
+
+de proposer une signature électronique intégrée.
+
+de permettre un aperçu PDF avant génération finale.
+
+d’intégrer une base de données SQLite (ou Airtable en source secondaire).
+
+de centraliser tous les contrats générés, signés et les informations RH.
+
+II. Fonctionnalités déjà développées ✅
+1. 💾 Base de données
+Utilisation de SQLite.
+
+Création de la table user avec les champs suivants :
+
+Prénom, Nom, Civilité, Date et lieu de naissance, Nationalité
+
+Adresse, Numéro de sécurité sociale
+
+Titre de séjour, Numéro + date validité
+
+Poste, Date de prise de poste, Position, Coefficient
+
+Lieu de travail, Limitation géographique régionale
+
+Nom de l'entreprise
+
+2. 📋 Formulaire employé
+Affichage du formulaire de création d’un employé.
+
+Séparation du formulaire en colonnes pour une meilleure UX (gauche / centre / droite).
+
+Intégration du CSS dans un fichier séparé (employer.css) avec fond dégradé.
+
+3. 🧠 Sélection du type de contrat (étape initiale)
+Choix du type de document (ex: contrat_cdi) avant de remplir les informations.
+
+4. 📄 Génération PDF automatisée
+Intégration de modèles (contrat_cdi.html).
+
+Données dynamiques injectées dans le template HTML via Django.
+
+Conversion HTML → PDF via xhtml2pdf.
+
+5. 🖊 Signature
+Affichage du bloc de signature avec :
+
+Signature entreprise (image)
+
+Prénom/Nom/Civilité de l'employé
+
+Signature dynamique intégrée dans le PDF.
+
+6. 🌐 Airtable (source secondaire)
+Requête vers Airtable si les données ne sont pas trouvées dans SQLite.
+
+III. Fonctionnalités à développer 🛠️
+1. 👁️ Aperçu du contrat avant création PDF (Preview)
+Nouvelle vue pour générer un aperçu HTML du contrat rempli avant conversion PDF.
+
+Ajout d’un bouton : Prévisualiser le contrat.
+
+Possibilité de revenir en arrière pour corriger les champs.
+
+2. 🔐 Signature électronique avancée (avec validation)
+Ajout d’une étape où l'utilisateur ou l’employé peut valider la signature.
+
+Intégration potentielle avec une API de signature (e.g. SignRequest, DocuSign).
+
+Workflow :
+
+Génération du contrat
+
+Envoi pour signature
+
+Récupération du contrat signé
+
+3. 📚 Historique des contrats
+Liste des contrats générés avec :
+
+Nom de l’employé
+
+Type de contrat
+
+Date de création
+
+Statut (signé/non signé)
+
+Bouton pour télécharger chaque contrat en PDF.
+
+4. 🔍 Dashboard RH
+Vue d’ensemble de tous les employés avec filtres :
+
+Poste, date d’embauche, statut contrat
+
+Stats : nombre de contrats signés, à venir, expirés
+
+5. 📦 Export & sauvegarde
+Sauvegarde automatique dans un répertoire /contrats/
+
+Possibilité d’export CSV de la base user.
+
+6. ✍️ Édition manuelle du contrat (éditeur PDF en ligne)
+Lorsqu’un contrat est modifié manuellement (ex: via un éditeur intégré dans le navigateur), les champs du formulaire doivent être mis à jour automatiquement :
+
+dans la base SQLite
+
+dans Airtable (via l’API REST)
+
+⚠️ Ce scénario est utile lorsqu’un employé est créé à partir du formulaire contrat mais n’existe pas encore dans la base. L’application doit alors :
+
+Créer l’employé dans la base en parallèle de la génération du contrat.
+
+Synchroniser toutes les données dans les deux bases.
+
+7. 📝 Édition visuelle du PDF dans le navigateur
+Mise en place d’un éditeur PDF dans le navigateur type WordPress ou Google Docs :
+
+Permettre la modification visuelle du texte du contrat (police, alignement, contenu)
+
+Basé sur un éditeur WYSIWYG (type PDF.js + Fabric.js, ou react-pdf-editor)
+
+Workflow :
+
+Le contrat est généré à partir du template.
+
+Il s’ouvre dans un éditeur visuel.
+
+L’utilisateur peut modifier le contenu avant validation.
+
+Une fois confirmé, le PDF final est généré et sauvegardé.
+
+IV. Contraintes techniques
+Élément	Spécification
+Framework	Django (Python)
+Base de données	SQLite (AirTable en source secondaire si donnée manquante)
+PDF	xhtml2pdf
+Signature	Image statique + API à intégrer ultérieurement
+CSS	Fichier séparé (employer.css), responsive, fond dégradé
+Stockage fichiers	Local ou cloud à définir (type /media/contrats/)
+Sécurité	Limitation des accès (vue admin uniquement), à définir plus tard
+Synchronisation Airtable	Lorsqu’un employé est ajouté ou un contrat modifié, les données sont envoyées vers Airtable en parallèle de SQLite
+API	Utilisation de la clé API Airtable et de l’ID de base pour chaque opération
+Gestion des doublons	Vérification par nom + prénom + date de naissance pour éviter de créer deux fois la même entrée
+
+V. Roadmap ⏳
+Formulaire Employé	✅ Terminé	
+Génération PDF Contrat	✅ Terminé	
+Signature image dans PDF	✅ Terminé	
+Airtable fallback (lecture)	✅ Terminé	
+Preview contrat avant PDF	✅ Terminé
+Signature électronique API	✅ Terminé	
+Historique des contrats	🔜 À faire	
+Dashboard RH	🔜 À faire	
+Éditeur PDF visuel dans le navigateur	🔜 À faire	
+Création/sauvegarde automatique Airtable + DB lors de l’édition	✅ Terminé

@@ -15,7 +15,7 @@
             gap: 0;
             position: relative;
         }
-        .step {
+        .step { 
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -156,7 +156,7 @@
 
                     <label>Civilité :</label>
                     <div style="display:flex;align-items:center;gap:10px;">
-                        <select name="civilite" required>
+                        <select name="civilite">
                             <option value="">{{ form_data.civilite }}</option>
                             <option value="Monsieur" {% if form_data.civilite == "Monsieur" %}selected{% endif %}>Homme</option>
                             <option value="Madame" {% if form_data.civilite == "Madame" %}selected{% endif %}>Femme</option>
@@ -181,15 +181,14 @@
                     <label>Email :</label>
                     <input type="text" name="email" value="{{ form_data.email }}">
 
-                    <label>Photo:</label>
-                    <input type="file" name="photo" accept="image/*" id="photo-input">
-                    {% if form_data.photo and form_data.photo|slice:":4" == "http" %}
+                    <label>Photo :</label>
+                    <input type="file" name="photo" id="photo-input"
+                        accept="image/png,image/jpeg,image/jpg,image/gif,image/webp,image/bmp,image/svg+xml,image/tiff,image/x-icon,image/heic,image/heif">
+                        {% if form_data.photo and form_data.photo|slice:":4" == "http" %}
                         <img id="photo-preview" src="{{ form_data.photo }}" alt="Photo actuelle" style="max-width:100px;max-height:100px;margin-top:8px;">
-                    {% elif photo and photo|slice:":4" == "http" %}
+                        {% elif photo and photo|slice:":4" == "http" %}
                         <img id="photo-preview" src="{{ photo }}" alt="Photo" style="max-width:100px;max-height:100px;margin-top:8px;">
-                    {% else %}
-                        <img id="photo-preview" src="#" alt="Aperçu photo" style="display:none;max-width:100px;max-height:100px;margin-top:8px;">
-                    {% endif %}
+                        {% endif %}
 
                     <label>Matricule :</label>
                     <input type="text" name="matricule" value="{{ form_data.matricule }}">
@@ -219,7 +218,7 @@
                     <label>Numéro de séjour :</label>
                     <input type="text" name="num_sejour" value="{{ form_data.num_sejour }}">
 
-                    <label>Date de validité du séjour (pas encore disponible) :</label>
+                    <label>Date de validité du séjour :</label>
                     <input type="date" name="date_valable_sejour" value="{{ form_data.date_valable_sejour }}">
 
                     <button type="button" class="next">Suivant</button>

@@ -1,11 +1,53 @@
-﻿*.pyc
+﻿# Environnement virtuel
+venv/
+env/
+.venv/
+
+
+# Base de données
+db.sqlite3
+*.sqlite
+
+# Fichiers de configuration avec données sensibles
+users.json
+.env
+.env.local
+.env.production
+
+# Fichiers compilés Python
 __pycache__/
-*.db
-*.sqlite3
-/Data/
-/media/
-/staticfiles/
-/venv/
-/env/
+*.pyc
+*.pyo
+*.pyd
+
+# Fichiers temporaires et de debug
+*.tmp
+*.temp
+debug_*.html
+debug_*.json
+
+# Fichiers de logs
 *.log
-*.pdf
+logs/
+
+# Fichiers IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Fichiers système
+.DS_Store
+Thumbs.db
+
+# Fichiers de test temporaires
+test_*.py.bak
+
+# Fichiers d'archive et extractions
+*.zip
+*.rar
+*.tar
+*.tar.gz
+*.7z
+automatisation_moodle*/
+**/automatisation_moodle*/
