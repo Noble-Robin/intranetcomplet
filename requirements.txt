@@ -7,3 +7,7 @@ reportlab
 openpyxl
 PyPDF2
 pycryptodome
+xhtml2pdf
+pyairtable
+ldap3
+requests
