@@ -89,8 +89,8 @@ class NextcloudAPI:
         return remote_path
 
     def share_file_nextcloud(self, path):
-        if not path.startswith(''):
-            path = f"/{path}"
+        if not path.startswith('/caplogy-data/pedagogie/'):
+            path = f"/caplogy-data/pedagogie/{path}"
         print(f"[DEBUG] Chemin transmis à Nextcloud: {path}")
         encoded_path = quote(path)
         print(f"[DEBUG] Chemin encodé: {encoded_path}")
