@@ -4,6 +4,7 @@ env/
 .venv/
 
 
+
 # Base de données
 db.sqlite3
 *.sqlite
