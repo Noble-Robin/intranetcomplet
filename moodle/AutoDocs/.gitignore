@@ -4,7 +4,6 @@ env/
 .venv/
 
 
-
 # Base de données
 db.sqlite3
 *.sqlite
@@ -52,3 +51,4 @@ test_*.py.bak
 *.7z
 automatisation_moodle*/
 **/automatisation_moodle*/
+
