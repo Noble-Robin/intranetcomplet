@@ -99,7 +99,9 @@ class NextcloudAPI:
         resp = requests.post(self.share, headers=headers, data=data, auth=self.auth, verify=False)
         resp.raise_for_status()
         tree = ET.fromstring(resp.text)
-        return tree.find('.//url').text
+        url = tree.find('.//url').text
+        url = url.replace(':443', '')
+        return url
 
     def get_share_url(self, file_path):
         """Génère une URL de partage Nextcloud pour un fichier donné"""
