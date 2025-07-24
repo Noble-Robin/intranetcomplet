@@ -101,7 +101,6 @@ class NextcloudAPI:
     def get_share_url(self, file_path):
         """Génère une URL de partage Nextcloud pour un fichier donné"""
         try:
-            # Supprimer la logique qui force le chemin à commencer par '/Shared/Biblio_Cours_Caplogy'
             return self.share_file_nextcloud(file_path)
         except Exception as e:
             print(f"Erreur lors de la génération de l'URL de partage pour {file_path}: {e}")

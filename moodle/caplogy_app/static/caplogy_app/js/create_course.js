@@ -153,7 +153,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         currentSectionId = sectionId;
         currentResourceBtn = btn;
-        openFileModal('Biblio_Cours_Caplogy/');
+        openFileModal('caplogy-data/pedagogie/Biblio_Cours_Caplogy/');
     };
     
     console.log('🚀 DEBUG: Fonction addResource définie sur window:', typeof window.addResource);
