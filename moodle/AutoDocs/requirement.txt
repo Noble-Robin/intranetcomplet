@@ -1,0 +1,4 @@
+django
+xhtml2pdf
+requests
+python-dotenv

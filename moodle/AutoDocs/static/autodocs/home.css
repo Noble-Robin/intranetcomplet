@@ -1,36 +1,12 @@
-:root {
-    --color-bg: #f4f7fa;
-    --color-bg-gradient: linear-gradient(120deg, #e3eafc 0%, #cbe7ff 100%);
-    --color-text: #222;
-    --color-panel: #fff;
-    --color-header: #0a2540;
-    --color-btn-bg: linear-gradient(90deg, #3b82f6 0%, #0a2540 100%);
-    --color-btn-bg-hover: linear-gradient(90deg, #0a2540 0%, #3b82f6 100%);
-    --color-footer-bg: linear-gradient(90deg, #e3eafc 0%, #cbe7ff 100%);
-    --color-footer-text: #222;
-}
-
-[data-theme="dark"] {
-    --color-bg: #0a2540;
-    --color-bg-gradient: linear-gradient(120deg, #0a2540 0%, #3b82f6 100%);
-    --color-text: #fff;
-    --color-panel: #1a2a40;
-    --color-header: #fff;
-    --color-btn-bg: linear-gradient(90deg, #0a2540 0%, #3b82f6 100%);
-    --color-btn-bg-hover: linear-gradient(90deg, #3b82f6 0%, #0a2540 100%);
-    --color-footer-bg: linear-gradient(90deg, #0a2540 0%, #3b82f6 100%);
-    --color-footer-text: #fff;
-}
-
 /* Reset et base */
 html, body {
     height: 100%;
     margin: 0; 
     padding: 0;
     font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
-    color: var(--color-text);
-    background: var(--color-bg-gradient);
-    overflow: hidden;
+    color: #222;
+    background: linear-gradient(120deg, #0a2540 0%, #3b82f6 100%);
+    overflow: hidden; /* empêche scroll global */
     box-sizing: border-box; 
 }
 
@@ -60,7 +36,7 @@ html, body {
 
 /* Formulaire */
 .caplogy-container {
-    background: var(--color-panel);
+    background: #fff;
     border-radius: 18px;
     box-shadow: 0 8px 32px rgba(10,37,64,0.18);
     max-width: 440px;
@@ -89,7 +65,7 @@ html, body {
 }
 .caplogy-header h1 {
     font-size: 2.2rem;
-    color: var(--color-header);
+    color: #0a2540;
     margin: 0;
     font-weight: 800;
     letter-spacing: 1.5px;
@@ -98,7 +74,7 @@ html, body {
 
 /* Inputs / Labels */
 label {
-    color: var(--color-header);
+    color: #0a2540;
     font-weight: 600;
     margin-bottom: 7px;
     display: block;
@@ -111,7 +87,7 @@ select, button, input[type="text"], input[type="email"] {
     border: 1px solid #d1d5db;
     margin-bottom: 22px;
     font-size: 1.05rem;
-    background: var(--color-panel);
+    background: #f8fafc;
     transition: border 0.2s, box-shadow 0.2s;
 }
 select:focus, input:focus {
@@ -120,7 +96,7 @@ select:focus, input:focus {
     box-shadow: 0 0 0 2px #3b82f633;
 }
 button {
-    background: var(--color-btn-bg);
+    background: linear-gradient(90deg, #0a2540 0%, #3b82f6 100%);
     color: #fff;
     font-weight: 700;
     border: none;
@@ -130,13 +106,13 @@ button {
     letter-spacing: 0.5px;
 }
 button:hover {
-    background: var(--color-btn-bg-hover);
+    background: linear-gradient(90deg, #3b82f6 0%, #0a2540 100%);
     transform: translateY(-2px) scale(1.03);
 }
 
 /* Preview */
 .preview-panel {
-    background: var(--color-panel);
+    background: #fff;
     border-radius: 18px;
     box-shadow: 0 8px 32px rgba(10,37,64,0.18);
     max-width: 440px;
@@ -162,7 +138,7 @@ button:hover {
 /* Footer */
 .caplogy-footer {
     text-align: center;
-    color: var(--color-footer-text);
+    color: #fff;
     font-size: 1rem;
     opacity: 0.90;
     letter-spacing: 0.5px;
@@ -170,7 +146,7 @@ button:hover {
     left: 0;
     right: 0;
     bottom: 0;
-    background: var(--color-footer-bg);
+    background: linear-gradient(90deg, #0a2540 0%, #3b82f6 100%);
     padding: 12px 0 10px 0;
     z-index: 10;
 }
@@ -219,7 +195,7 @@ input:invalid, select:invalid {
 /* Datalist suggestions */
 .datalist-suggestions {
     position: absolute;
-    background: var(--color-panel);
+    background: #f8fafc;
     border: 1px solid #d1d5db;
     border-radius: 9px;
     box-shadow: 0 2px 8px rgba(59,130,246,0.08);
@@ -238,7 +214,7 @@ input:invalid, select:invalid {
 }
 .datalist-suggestions div:hover, .datalist-suggestions .active {
     background: #e6f0fa;
-    color: var(--color-header);
+    color: #0a2540;
 }
 
 /* Pour éviter que le parent .caplogy-container overflow cache la suggestion */

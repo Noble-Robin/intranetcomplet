@@ -160,6 +160,7 @@ def airtable_entreprise(nom_entreprise):
             return records[0]["fields"]
     return None
 
+from django.contrib.auth.decorators import login_required
 @login_required
 @group_required('admin', 'rh')
 def index(request):
@@ -568,6 +569,7 @@ def index(request):
 
     return render(request, "index.html", context)
 
+from django.contrib.auth.decorators import login_required
 @login_required
 @group_required('admin', 'rh')
 def creer_employer(request):
@@ -608,6 +610,7 @@ def creer_employer(request):
         "entreprises": entreprises,
     })
 
+from django.contrib.auth.decorators import login_required
 @login_required
 @group_required('admin', 'rh')
 def generer_contrat_cdi(request):
@@ -896,6 +899,7 @@ def generer_contrat_cdi(request):
     # return response
     return redirect('/')
 
+from django.contrib.auth.decorators import login_required
 @login_required
 @group_required('admin', 'rh')
 def modifier_employer(request):
@@ -1134,6 +1138,7 @@ def modifier_employer(request):
         "photo": merged_data.get("photo", ""),
     })
 
+from django.contrib.auth.decorators import login_required
 @login_required
 @group_required('admin', 'rh')
 def attestation_de_restitution_view(request):
