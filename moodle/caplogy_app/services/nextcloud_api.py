@@ -91,8 +91,11 @@ class NextcloudAPI:
     def share_file_nextcloud(self, path):
         if not path.startswith('/'):
             path = f"/{path}"
+        print(f"[DEBUG] Chemin transmis à Nextcloud: {path}")
+        encoded_path = quote(path)
+        print(f"[DEBUG] Chemin encodé: {encoded_path}")
         headers = {'OCS-APIRequest': 'true', 'Accept': 'application/xml'}
-        data = {'path': path, 'shareType': 3, 'permissions': 1}
+        data = {'path': encoded_path, 'shareType': 3, 'permissions': 1}
         resp = requests.post(self.share, headers=headers, data=data, auth=self.auth, verify=False)
         resp.raise_for_status()
         tree = ET.fromstring(resp.text)
