@@ -90,7 +90,7 @@ class NextcloudAPI:
 
     def share_file_nextcloud(self, path):
         if not path.startswith('/'):
-            path = f"/caplogy-data/pedagogie/{path}"
+            path = f"{path}"
         print(f"[DEBUG] Chemin transmis à Nextcloud: {path}")
         encoded_path = quote(path, safe='/')
         print(f"[DEBUG] Chemin encodé: {encoded_path}")
