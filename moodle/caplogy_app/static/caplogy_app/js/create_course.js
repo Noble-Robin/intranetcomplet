@@ -153,7 +153,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         currentSectionId = sectionId;
         currentResourceBtn = btn;
-        openFileModal('/Cours Test/');
+        openFileModal('caplogy-data/pedagogie/Biblio_Cours_Caplogy/');
     };
     
     console.log('🚀 DEBUG: Fonction addResource définie sur window:', typeof window.addResource);
@@ -188,7 +188,7 @@ document.addEventListener('DOMContentLoaded', () => {
     modalClose.addEventListener('click', closeFileModal);
     modal.addEventListener('click', (e) => {
         if (e.target === modal) {
-            closeFileModal();
+            closeFileModal();/nc_dir/
         }
     });
 
@@ -241,9 +241,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Créer un timeout personnalisé pour le fetch (60 secondes)
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => {
-            controller.abort();
-        }, 60000); // 60 secondes
+        // const timeoutId = setTimeout(() => {
+        //     controller.abort();
+        // }, 60000); // 60 secondes
 
         // Nettoyer le chemin avant l'encodage
         const cleanedPath = path.trim().replace(/\\/g, '/');
@@ -256,14 +256,14 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('DEBUG: Chemin entièrement encodé:', fullyEncodedPath);
 
         // Faire l'appel AJAX pour récupérer les fichiers Nextcloud
-        fetch(`/nc_dir/?path=${fullyEncodedPath}`, {
+        fetch(`/moodle/nc_dir/?path=${fullyEncodedPath}`, {
             signal: controller.signal,
             headers: {
                 'X-Requested-With': 'XMLHttpRequest'
             }
         })
         .then(response => {
-            clearTimeout(timeoutId);
+            // clearTimeout(timeoutId);
             if (!response.ok) {
                 throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             }
@@ -272,21 +272,21 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(data => {
             processFileData(data, path, colors, isDarkMode);
         })
-        .catch(error => {
-            clearTimeout(timeoutId);
-            console.error('Erreur lors du chargement des fichiers:', error);
+        // .catch(error => {
+        //     clearTimeout(timeoutId);
+        //     console.error('Erreur lors du chargement des fichiers:', error);
             
-            let errorMessage = '❌ Erreur de chargement';
-            if (error.name === 'AbortError') {
-                errorMessage = '⏰ Timeout: Nextcloud met trop de temps à répondre (>30s)';
-            } else if (error.message.includes('HTTP')) {
-                errorMessage = `❌ Erreur serveur: ${error.message}`;
-            } else if (error.message.includes('Failed to fetch')) {
-                errorMessage = '🌐 Erreur de connexion réseau';
-            }
+        //     let errorMessage = '❌ Erreur de chargement';
+        //     if (error.name === 'AbortError') {
+        //         errorMessage = '⏰ Timeout: Nextcloud met trop de temps à répondre (>30s)';
+        //     } else if (error.message.includes('HTTP')) {
+        //         errorMessage = `❌ Erreur serveur: ${error.message}`;
+        //     } else if (error.message.includes('Failed to fetch')) {
+        //         errorMessage = '🌐 Erreur de connexion réseau';
+        //     }
             
-            fileList.innerHTML = `<li style="text-align: center; padding: 2rem; color: ${colors.errorText}; background-color: ${isDarkMode ? '#7f1d1d' : '#fef2f2'}; border-radius: 0.5rem; margin: 1rem;">${errorMessage}<br><small style="opacity: 0.8;">Réessayez en rafraîchissant la page ou contactez l'administrateur</small></li>`;
-        });
+        //     fileList.innerHTML = `<li style="text-align: center; padding: 2rem; color: ${colors.errorText}; background-color: ${isDarkMode ? '#7f1d1d' : '#fef2f2'}; border-radius: 0.5rem; margin: 1rem;">${errorMessage}<br><small style="opacity: 0.8;">Réessayez en rafraîchissant la page ou contactez l'administrateur</small></li>`;
+        // });
     }
 
     // Fonction pour mettre à jour le message de chargement avec progression

@@ -35,8 +35,12 @@
         <a href="{% url 'home' %}" class="nav-link">Accueil</a>
       {% endif %}
       {% if request.user.is_authenticated %}
-        {% if request.user.userprofile.role == 'admin' %}
-          <a href="{% url 'admin_page' %}" class="nav-link">Admin</a>
+        {% if request.user.is_authenticated and request.user.groups.all|length > 0 %}
+          {% for group in request.user.groups.all %}
+            {% if group.name == 'admin' %}
+              <a href="{% url 'admin_page' %}" class="nav-link">Admin</a>
+            {% endif %}
+          {% endfor %}
         {% endif %}
       {% endif %}
       

@@ -11,6 +11,9 @@
     <div class="loader-overlay" id="loader-overlay">
         <div class="spinner"></div>
     </div>
+    <div style="margin: 20px 0 0 20px;">
+        <a href="/" class="button" style="padding:8px 16px; background:#3498db; color:white; border-radius:5px; text-decoration:none; font-weight:bold;">Revenir à l'accueil</a>
+    </div>
     <div class="main-flex-wrapper">
         <div class="caplogy-container">
             <div class="caplogy-header">
@@ -223,6 +226,7 @@
             const root = document.documentElement;
             let stored = localStorage.getItem('darkMode');
             let dark = stored === 'true' || (!stored && window.matchMedia('(prefers-color-scheme: dark)').matches);
+<<<<<<< HEAD
 
             function applyTheme() {
                 if (dark) {
@@ -245,6 +249,24 @@
         document.getElementById('materiel').addEventListener('change', function() {
             showLoader();
             document.getElementById('doc-form').submit();
+=======
+
+            function applyTheme() {
+                if (dark) {
+                    root.setAttribute('data-theme', 'dark');
+                } else {
+                    root.removeAttribute('data-theme');
+                }
+            }
+            if (toggle) {
+                toggle.addEventListener('click', function() {
+                    dark = !dark;
+                    localStorage.setItem('darkMode', dark);
+                    applyTheme();
+                });
+            }
+            applyTheme();
+>>>>>>> 786799c53eb834d1be46ca97b5a7a27a7e0cdcdf
         });
 
         // Loader lors du changement de modèle (pour charger les numéros de série)

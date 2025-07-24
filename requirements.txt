@@ -1,0 +1,9 @@
+Django>=4.2,<5.0
+Pillow
+python-dotenv
+django-crispy-forms
+crispy-bootstrap5
+reportlab
+openpyxl
+PyPDF2
+pycryptodome

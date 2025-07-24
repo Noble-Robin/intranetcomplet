@@ -47,7 +47,7 @@ def login_view(request):
 @group_required('admin', 'moodle')
 def home_view(request):
     # Si l'utilisateur n'a aucun accès, afficher une page d'accueil vide/minimale
-    if hasattr(request.user, 'userprofile') and request.user.userprofile.role == 'none':
+    if not request.user.groups.filter(name__in=['admin', 'moodle', 'rh']).exists():
         return render(request, 'caplogy_app/home_none.html')
     api = MoodleAPI(
         url=os.getenv('MOODLE_URL'),
@@ -379,9 +379,7 @@ def category_courses_view(request, category_id):
     })
 
 def is_admin(user):
-    if hasattr(user, 'userprofile'):
-        return user.userprofile.role == 'admin'
-    return False
+    return user.groups.filter(name='admin').exists()
 
 @login_required
 @user_passes_test(is_admin)
@@ -395,11 +393,11 @@ def admin_view(request):
     # Inclure tous les utilisateurs Django
     for user in User.objects.all():
         profile = getattr(user, 'userprofile', None)
-        role = profile.role if profile else 'none'
+        user_groups = list(user.groups.values_list('name', flat=True))
         users.append({
             'id': user.id,
             'username': user.username,
-            'role': role,
+            'groups': user_groups,
             'is_ldap_prof': any(user.username == prof['username'] for prof in ldap_profs)
         })
     # Inclure les profs LDAP qui n'ont pas encore de compte Django
@@ -408,7 +406,7 @@ def admin_view(request):
             users.append({
                 'id': None,
                 'username': prof['username'],
-                'role': 'none',
+                'groups': ['aucun_acces'],
                 'is_ldap_prof': True,
                 'name': prof['name'],
                 'mail': prof['mail']
@@ -416,27 +414,25 @@ def admin_view(request):
     # Gestion du changement de rôle
     if request.method == 'POST' and 'change_role' in request.POST:
         user_id = request.POST.get('user_id')
-        new_role = request.POST.get('new_role')
+        new_group = request.POST.get('new_role')
         username = request.POST.get('username')
+        from django.contrib.auth.models import User, Group
         try:
             if user_id:
                 user = User.objects.get(id=user_id)
             else:
-                # Créer le compte Django si inexistant
                 user, _ = User.objects.get_or_create(username=username)
-            profile = getattr(user, 'userprofile', None)
-            if not profile:
-                from .models import UserProfile
-                profile = UserProfile.objects.create(user=user, role=new_role)
-            else:
-                if new_role in ['admin', 'user', 'none']:
-                    profile.role = new_role
-                    profile.save()
-            messages.success(request, f"Rôle de {username} mis à jour en '{new_role}'")
+            # Retirer l'utilisateur de tous les groupes gérés
+            managed_groups = ['admin', 'moodle', 'rh', 'aucun_acces']
+            user.groups.clear()
+            # Ajouter au nouveau groupe
+            group, _ = Group.objects.get_or_create(name=new_group)
+            user.groups.add(group)
+            messages.success(request, f"Groupe de {username} mis à jour en '{new_group}'")
         except Exception as e:
-            messages.error(request, f"Erreur lors du changement de rôle: {str(e)}")
+            messages.error(request, f"Erreur lors du changement de groupe: {str(e)}")
         return redirect('admin_page')
-    return render(request, 'caplogy_app/admin.html', {'users': users, 'ldap_profs': ldap_profs})
+    return render(request, 'caplogy_app/admin.html', {'users': users, 'ldap_profs': ldap_profs, 'managed_groups': ['admin', 'moodle', 'rh', 'aucun_acces']})
 
 @login_required
 @group_required('admin')
@@ -1032,7 +1028,7 @@ def list_nc_dir(request):
         
         return JsonResponse({'folders': folders, 'files': files})
     except requests.exceptions.Timeout:
-        error_msg = f'Timeout Nextcloud: Le serveur met trop de temps à répondre (>{nc_api.timeout[1]}s). Réessayez ou contactez l\'administrateur.'
+        error_msg = "Timeout Nextcloud: Le serveur met trop de temps à répondre (>30s). Réessayez ou contactez l'administrateur."
         print(f"[ERROR] {error_msg}")
         return JsonResponse({
             'error': error_msg,

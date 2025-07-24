@@ -396,7 +396,7 @@ function initCurrentTeachers() {
     const currentTeachersList = document.getElementById('current-teachers-list');
     
     // Récupérer les professeurs actuels
-    fetch(`/api/course/${courseId}/teachers/`)
+    fetch(`/moodle/api/course/${courseId}/teachers/`)
         .then(response => response.json())
         .then(data => {
             if (data.teachers && data.teachers.length > 0) {
@@ -428,8 +428,8 @@ window.removeCurrentTeacher = function(teacherId, username) {
     
     const courseData = document.getElementById('course-data');
     const courseId = courseData.dataset.id;
-    
-    fetch(`/api/course/${courseId}/teachers/remove/`, {
+
+    fetch(`/moodle/api/course/${courseId}/teachers/remove/`, {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json',
@@ -596,7 +596,7 @@ function initCurrentAssistants() {
     const currentAssistantsList = document.getElementById('current-assistants-list');
     
     // Récupérer les assistants actuels avec role_id=2
-    fetch(`/api/course/${courseId}/teachers/?role_id=2`)
+    fetch(`/moodle/api/course/${courseId}/teachers/?role_id=2`)
         .then(response => response.json())
         .then(data => {
             if (data.teachers && data.teachers.length > 0) {
@@ -630,8 +630,8 @@ window.removeCurrentAssistant = function(teacherId, teacherName) {
     
     const courseData = document.getElementById('course-data');
     const courseId = courseData.dataset.id;
-    
-    fetch(`/api/course/${courseId}/remove_teacher/`, {
+
+    fetch(`/moodle/api/course/${courseId}/remove_teacher/`, {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json',

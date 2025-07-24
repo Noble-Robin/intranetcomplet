@@ -6,7 +6,6 @@ env/
 
 # Base de données
 db.sqlite3
-*.db
 *.sqlite
 
 # Fichiers de configuration avec données sensibles
