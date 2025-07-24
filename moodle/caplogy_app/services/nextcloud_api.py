@@ -102,9 +102,14 @@ class NextcloudAPI:
         return tree.find('.//url').text
 
     def get_share_url(self, file_path):
-        """Génère une URL de partage Nextcloud pour un fichier donné"""
+        """
+        Génère un lien de partage Nextcloud pour un fichier donné,
+        et retourne un tuple (url, nom_du_fichier) pour affichage dans le template.
+        """
         try:
-            return self.share_file_nextcloud(file_path)
+            share_url = self.share_file_nextcloud(file_path)
+            file_name = os.path.basename(file_path)
+            return share_url, file_name
         except Exception as e:
             print(f"Erreur lors de la génération de l'URL de partage pour {file_path}: {e}")
-            return None
+            return None, None
