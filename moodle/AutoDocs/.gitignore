@@ -10,6 +10,7 @@ db.sqlite3
 
 # Fichiers de configuration avec données sensibles
 users.json
+.env
 .env.local
 .env.production
 
